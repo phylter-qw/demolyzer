@@ -1,0 +1,133 @@
+﻿<UserControl x:Class="Demolyzer.View.PlayerResultsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:View="clr-namespace:Demolyzer.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="2600">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+    <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource CellStyle}">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style>
+    <Style x:Key="ScoreCellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource CellStyle}">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+    <!--<Style x:Key="StatsRowStyle" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource RowStyle}">
+      <Setter Property="Background" Value="{Binding RowBackground}" />
+    </Style>-->
+  </UserControl.Resources>
+  <Grid>
+
+    <Border Background="Black">
+      <DataGrid ItemsSource="{Binding Path=PlayerResults4on4MapAll}" 
+                        CanUserAddRows="False" 
+                        CanUserDeleteRows="False" 
+                        AutoGenerateColumns="False" 
+                        Background="Transparent"
+                        Width="Auto" 
+                        Height="Auto"
+                        IsReadOnly="True"
+                        FrozenColumnCount="10"
+                        VerticalAlignment="Stretch" 
+                        HorizontalAlignment="Stretch"
+                        VerticalGridLinesBrush="Black"
+                        RowHeaderWidth="0">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Ping" Binding="{Binding Path=AveragePing}" Width="35"/>
+          <DataGridTextColumn Header="PL" Binding="{Binding Path=AveragePL}" Width="25"/>
+          <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" MinWidth="100"/>
+          <DataGridTextColumn Header="Team" Binding="{Binding Path=Team}" TextBlock.TextAlignment="Center"/>
+          <DataGridTextColumn Header="Score" Binding="{Binding Path=Score}" SortDirection="Descending"/>
+          <DataGridTextColumn Header="Rating" Binding="{Binding Path=Rating}"/>
+          <DataGridTextColumn Header="Avg Power" Binding="{Binding Path=AveragePower}"/>
+          <DataGridTextColumn Header="Eff" Binding="{Binding Path=Efficiency}" Foreground="Yellow"/>
+          <DataGridTextColumn Header="Dths" Binding="{Binding Path=Deaths}"/>
+          <DataGridTextColumn Header="E Kills" Binding="{Binding Path=KillsEnemy}"/>
+          <DataGridTextColumn Header="LG" Binding="{Binding Path=KillsLG}"/>
+          <DataGridTextColumn Header="RL" Binding="{Binding Path=KillsRL}"/>
+          <DataGridTextColumn Header="GL" Binding="{Binding Path=KillsGL}"/>
+          <DataGridTextColumn Header="NG" Binding="{Binding Path=KillsNG}"/>
+          <DataGridTextColumn Header="SG" Binding="{Binding Path=KillsSG}"/>
+          <DataGridTextColumn Header="LG%" Binding="{Binding Path=LGPercent}"/>
+          <DataGridTextColumn Header="RL%" Binding="{Binding Path=RLPercent}"/>
+          <DataGridTextColumn Header="GL%" Binding="{Binding Path=GLPercent}"/>
+          <DataGridTextColumn Header="SG%" Binding="{Binding Path=SGPercent}"/>
+          <DataGridTextColumn Header="SSG%" Binding="{Binding Path=SSGPercent}"/>
+
+          <DataGridTextColumn Header="RL Avg Dmg" Binding="{Binding Path=RLAvgDamage}"/>
+          <DataGridTextColumn Header="RL DH" Binding="{Binding Path=RLDirectHits}"/>
+
+
+          <!--<DataGridTextColumn Header="(AFS)" Binding="{Binding Path=AverageFragStreak}" Width="35"/>-->
+          <DataGridTextColumn Header="Streak" Binding="{Binding Path=MaxFragStreak}"/>
+          <DataGridTextColumn Header="w/Quad" Binding="{Binding Path=KillsWithQuad}"/>
+          <DataGridTextColumn Header="QStreak" Binding="{Binding Path=MaxQuadStreak}"/>
+          <DataGridTextColumn Header="SpawnFrags" Binding="{Binding Path=KillsSpawn}"/>
+          <DataGridTextColumn Header="Kill RL" Binding="{Binding Path=KilledRL}" Foreground="Yellow"/>
+          <DataGridTextColumn Header="Kill LG" Binding="{Binding Path=KilledLG}"/>
+          <DataGridTextColumn Header="Kill Q" Binding="{Binding Path=KilledQuad}" Foreground="Yellow"/>
+          <DataGridTextColumn Header="TK" Binding="{Binding Path=KillsTeam}" Foreground="Yellow"/>
+          <DataGridTextColumn Header="Dths (TK)" Binding="{Binding Path=DeathsTeam}"/>
+          <DataGridTextColumn Header="Dths spwns" Binding="{Binding Path=DeathsSpawns}"/>
+          <DataGridTextColumn Header="Suici" Binding="{Binding Path=Suicides}"/>
+
+          <DataGridTextColumn Header="Dmg Eff" Binding="{Binding Path=DamageEfficiency}"/>
+          <DataGridTextColumn Header="Dmg Gvn" Binding="{Binding Path=DamageGiven}"/>
+          <DataGridTextColumn Header="Dmg Tm" Binding="{Binding Path=DamageTeam}"/>
+          <DataGridTextColumn Header="Dmg Tkn" Binding="{Binding Path=Damage}"/>
+          <DataGridTextColumn Header="Dmg Tkn Arm" Binding="{Binding Path=DamageArmor}"/>
+          <DataGridTextColumn Header="Dmg Tkn Hlth" Binding="{Binding Path=DamageHealth}"/>
+          <DataGridTextColumn Header="Dmg % Armor" Binding="{Binding Path=PercentArmor}"/>
+          <DataGridTextColumn Header="Armr Pickup" Binding="{Binding Path=Armor}"/>
+          <DataGridTextColumn Header="Hlth Pickup" Binding="{Binding Path=Health}"/>
+
+          <DataGridTextColumn Header="RA" Binding="{Binding Path=ItemCountRA}" Width="25"/>
+          <DataGridTextColumn Header="YA" Binding="{Binding Path=ItemCountYA}" Width="25"/>
+          <DataGridTextColumn Header="GA" Binding="{Binding Path=ItemCountGA}" Width="25"/>
+          <DataGridTextColumn Header="MH" Binding="{Binding Path=ItemCountMega}" Width="25"/>
+          <DataGridTextColumn Header="Qu" Binding="{Binding Path=ItemCountQuad}" Width="25" Foreground="Yellow"/>
+          <DataGridTextColumn Header="Pe" Binding="{Binding Path=ItemCountPent}" Width="25"/>
+          <DataGridTextColumn Header="Ey" Binding="{Binding Path=ItemCountEyes}" Width="25"/>
+          <!--<DataGridTextColumn Header="(Armor)" Binding="{Binding Path=ItemCountSSG}" Width="50"/>
+              <DataGridTextColumn Header="(Health)" Binding="{Binding Path=ItemCountNG}" Width="50"/>
+              <DataGridTextColumn Header="(A/H)" Binding="{Binding Path=ItemCountSNG}" Width="40"/>-->
+          <DataGridTextColumn Header="GL" Binding="{Binding Path=ItemCountGL}" Width="30"/>
+          <DataGridTextColumn Header="RL" Binding="{Binding Path=ItemCountRL}" Width="30"/>
+          <DataGridTextColumn Header="RL (Tm Pack)" Binding="{Binding Path=ItemCountRLFromTeamPack}"/>
+          <DataGridTextColumn Header="RL (E Pack)" Binding="{Binding Path=ItemCountRLFromEnemyPack}"/>
+          <DataGridTextColumn Header="LG" Binding="{Binding Path=ItemCountLG}" Width="30"/>
+          <DataGridTextColumn Header="LG (Tm Pack)" Binding="{Binding Path=ItemCountLGFromTeamPack}"/>
+          <DataGridTextColumn Header="LG (E Pack)" Binding="{Binding Path=ItemCountLGFromTeamPack}"/>
+
+          <DataGridTextColumn Header="RL NoDrop" Binding="{Binding Path=ItemCountRLNoDrop}"/>
+          <DataGridTextColumn Header="RL Drop" Binding="{Binding Path=ItemCountRLDropped}"/>
+          <DataGridTextColumn Header="RL Lost" Binding="{Binding Path=ItemCountRLLost}" Foreground="Yellow"/>
+          <DataGridTextColumn Header="RL Donated" Binding="{Binding Path=ItemCountRLDonated}"/>
+          <DataGridTextColumn Header="LG NoDrop" Binding="{Binding Path=ItemCountLGNoDrop}"/>
+          <DataGridTextColumn Header="LG Drop" Binding="{Binding Path=ItemCountLGDropped}"/>
+          <DataGridTextColumn Header="LG Lost" Binding="{Binding Path=ItemCountLGLost}"/>
+          <DataGridTextColumn Header="LG Donated" Binding="{Binding Path=ItemCountLGDonated}"/>
+
+          <DataGridTextColumn Header="Kills w/ E-Pack" Binding="{Binding Path=KillsFromEnemyPack}"/>
+          <DataGridTextColumn Header="Team Dths from PackDrop" Binding="{Binding Path=TeamDeathsFromDroppedPack}"/>
+
+          <DataGridTextColumn Header="Avg Speed" Binding="{Binding Path=AverageSpeed}"/>
+
+          <DataGridTextColumn Header="Kills w/RL" Binding="{Binding Path=KillsWithRL}"/>
+          <DataGridTextColumn Header="Kills per RL" Binding="{Binding Path=KillsPerRL}"/>
+          <DataGridTextColumn Header="Lives to get RL" Binding="{Binding Path=LivesToGetRL}"/>
+          <DataGridTextColumn Header="Time w/RL" Binding="{Binding Path=TimeWithRL}" Foreground="Yellow"/>
+          <DataGridTextColumn Header="Avg Time per RL" Binding="{Binding Path=AverageTimeWithRL}"/>
+          <DataGridTextColumn Header="Avg Time to get RL" Binding="{Binding Path=AverageTimeToGetRL}"/>
+
+        </DataGrid.Columns>
+      </DataGrid>
+    </Border>
+  </Grid>
+</UserControl>

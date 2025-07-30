@@ -1,0 +1,67 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:VM="clr-namespace:Demolyzer.ViewModel"
+                    xmlns:VMRatings="clr-namespace:Demolyzer.ViewModel.Ratings"
+                    xmlns:View="clr-namespace:Demolyzer.View"
+                    >
+
+
+  <LinearGradientBrush EndPoint="0,1" StartPoint="0,0" x:Key="PositiveBrush">
+    <GradientStop Color="#FF009900" Offset="0" />
+    <GradientStop Color="#FF00FF00" Offset="0.4" />
+    <GradientStop Color="#FF004400" Offset="1" />
+  </LinearGradientBrush>
+  <LinearGradientBrush EndPoint="0,1" StartPoint="0,0" x:Key="NegativeBrush">
+    <GradientStop Color="#FF880000" Offset="0" />
+    <GradientStop Color="#FFFF0000" Offset="0.4" />
+    <GradientStop Color="#FF440000" Offset="1" />
+  </LinearGradientBrush>
+  <LinearGradientBrush EndPoint="0,1" StartPoint="0,0" x:Key="YellowBrush">
+    <GradientStop Color="#FF999900" Offset="0" />
+    <GradientStop Color="#FFFFFF00" Offset="0.4" />
+    <GradientStop Color="#FF444400" Offset="1" />
+  </LinearGradientBrush>
+  <LinearGradientBrush EndPoint="0,1" StartPoint="0,0" x:Key="BlueBrush">
+    <GradientStop Color="#FF000099" Offset="0" />
+    <GradientStop Color="#FF0000FF" Offset="0.4" />
+    <GradientStop Color="#FF000044" Offset="1" />
+  </LinearGradientBrush>
+  <LinearGradientBrush EndPoint="0,1" StartPoint="0,0" x:Key="WhiteBrush">
+    <GradientStop Color="#FF999999" Offset="0" />
+    <GradientStop Color="#FFFFFFFF" Offset="0.4" />
+    <GradientStop Color="#FF444444" Offset="1" />
+  </LinearGradientBrush>
+
+  <DataTemplate DataType="{x:Type VM:MapCanvasViewModel}">
+    <View:MapCanvasView/>
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type VM:MatchResultsViewModel}">
+    <View:MatchResultsView/>
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type VM:ProgressPanelViewModel}">
+    <View:ProgressPanelViewControl/>
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type VM:PlayerResultsViewModel}">
+    <View:PlayerResultsView/>
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type VM:RatingsAndStatsViewModel}">
+    <View:RatingsAndStatsView/>
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type VM:RatingsHostViewModel}">
+    <View:RatingsHostView/>
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type VMRatings:ParticipantResultsViewModel}">
+    <View:ParticipantResultsViewControl/>
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type VMRatings:CompareParticipantsViewModel}">
+    <View:CompareParticipantsViewControl/>
+  </DataTemplate>
+
+</ResourceDictionary>

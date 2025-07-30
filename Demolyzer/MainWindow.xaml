@@ -1,0 +1,105 @@
+﻿<Window x:Class="Demolyzer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:VM="clr-namespace:Demolyzer.ViewModel"
+        xmlns:V="clr-namespace:Demolyzer.View"
+        Icon="Resources\icon.png"
+        Title="Demolyzer 2.1" Height="350" Width="525">
+  <Window.Resources>
+    <ObjectDataProvider x:Key="AppShell" ObjectType="{x:Type VM:ApplicationShellViewModel}"/>
+  </Window.Resources>
+  <Grid DataContext="{StaticResource AppShell}">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="340"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <Grid.Resources>
+      <HierarchicalDataTemplate DataType="{x:Type VM:MvdDirectoryTreeNodeViewModel}" ItemsSource="{Binding Path=Children, Mode=OneTime}">
+        <Border Background="#01000000" Padding="0,0,0,0" Name="PART_TagNodeRoot">
+          <Grid>
+            <StackPanel Name="PART_TagNodeInfo" Orientation="Horizontal" SnapsToDevicePixels="True">
+              <TextBlock Margin="1,0,1,0" Text="{Binding Path=Name, Mode=OneTime}" FontSize="11" Foreground="Yellow"/>
+              <StackPanel.ContextMenu>
+                <ContextMenu>  
+                  <MenuItem Header="Process Directory (as players)" Foreground="Black" Command="{Binding ProcessDirectoryCommand, Source={StaticResource AppShell}}" CommandParameter="{Binding}"/>
+                  <MenuItem Header="Process Directories (as players)" Foreground="Black" Command="{Binding ProcessDirectoriesCommand, Source={StaticResource AppShell}}" CommandParameter="{Binding}"/>
+                  <MenuItem Header="Process Directory (as teams)" Foreground="Black" Command="{Binding ProcessDirectoryAsTeamsCommand, Source={StaticResource AppShell}}" CommandParameter="{Binding}"/>
+                </ContextMenu>
+              </StackPanel.ContextMenu>
+            </StackPanel>
+          </Grid>
+        </Border>
+      </HierarchicalDataTemplate>
+      <HierarchicalDataTemplate DataType="{x:Type VM:MvdFileTreeNodeViewModel}" ItemsSource="{Binding Path=Children, Mode=OneTime}">
+        <Border Background="#01000000" Padding="0,0,0,0" Name="PART_TagNodeRoot">
+          <Grid>
+            <StackPanel Name="PART_TagNodeInfo" Orientation="Horizontal" SnapsToDevicePixels="True">
+              <TextBlock Margin="1,0,1,0" Text="{Binding Path=Name, Mode=OneTime}" FontSize="11" Foreground="White"/>
+            </StackPanel>
+          </Grid>
+        </Border>
+      </HierarchicalDataTemplate>
+
+    </Grid.Resources>
+    <!--<ListBox Grid.Column="0" Name="PART_DemoList"/>-->
+    <Grid Grid.Column="0">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="50"/>
+      </Grid.RowDefinitions>
+      <TabControl Grid.Row="0">
+        <TabItem Header="Tree" TextBlock.FontSize="18">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="45"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" TextBlock.FontSize="12">
+              <TextBlock Text="Sort by:" VerticalAlignment="Center" Margin="5" Foreground="White"/>
+              <StackPanel VerticalAlignment="Center">
+                <RadioButton Content="Date" Name="RadioDate"/>
+                <RadioButton Content="Name" Name="RadioName"/>
+              </StackPanel>
+            </StackPanel>
+            <TreeView Grid.Row="1" Name="PART_DemoTree" ItemsSource="{Binding DemoTree}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+          </Grid>
+        </TabItem>
+        <TabItem Header="List (all)" TextBlock.FontSize="18">
+          <ListView Name="PART_DemoList" ItemsSource="{Binding DemoList}" FontSize="10" V:GridViewSort.AutoSort="True">
+            <ListView.View>
+              <GridView AllowsColumnReorder="False">
+                <GridViewColumn DisplayMemberBinding="{Binding Path=Name, Mode=OneTime}"  Header="Name" Width="192" V:GridViewSort.PropertyName="Name"/>
+                <GridViewColumn DisplayMemberBinding="{Binding Path=Date, Mode=OneTime}"  Header="Date" Width="120" V:GridViewSort.PropertyName="Date"/>
+              </GridView>
+            </ListView.View>
+          </ListView>
+        </TabItem>
+        <TabItem Header="Today" TextBlock.FontSize="18">
+          <Grid>
+            <Grid.RowDefinitions>
+              <!--<RowDefinition Height="40"/>-->
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!--<Button Grid.Row="0" Margin="10,5,10,5" Width="100" Height="30" TextBlock.FontSize="14" Name="ButtonRefreshToday">Refresh</Button>-->
+            <ListView Grid.Row="1" Name="PART_DemoListToday" ItemsSource="{Binding DemoListToday}" FontSize="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+              <ListView.View>
+                <GridView>
+                  <GridViewColumn DisplayMemberBinding="{Binding Path=Name, Mode=OneTime}"  Header="Name" Width="310"/>
+                </GridView>
+              </ListView.View>
+            </ListView>
+          </Grid>
+        </TabItem>
+      </TabControl>
+      <Grid Grid.Row="1" Background="#FF222222">
+        <StackPanel Orientation="Horizontal">
+          <Button Content="Refresh" Margin="6" Width="100" Command="{Binding RefreshTreeCommand}"/>
+          <Button Content="Change Directory" Name="PART_ButtonChangeDirectory" Margin="6" Width="150"/>
+        </StackPanel>
+      </Grid>
+    </Grid>
+    <GridSplitter Grid.Column="1" ResizeDirection="Columns" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+    <ContentPresenter Grid.Column="2" Content="{Binding MainContent}"/>
+  </Grid>
+</Window>

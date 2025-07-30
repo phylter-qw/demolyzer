@@ -1,0 +1,643 @@
+﻿<UserControl x:Class="Demolyzer.View.ParticipantResultsViewControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:View="clr-namespace:Demolyzer.View"
+             mc:Ignorable="d" 
+             Name="PART_RootVisual"
+             d:DesignHeight="400" d:DesignWidth="1200">
+  <UserControl.Resources>
+    <!--Override parent's alternate tabitem style-->
+    <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
+      <Setter Property="HeaderTemplate" Value="{x:Null}"/>
+    </Style>
+
+    <DataTemplate x:Key="PlayerTemplate">
+      <TextBlock Name="TeamText" Text="{Binding Path=Player}" Foreground="Chartreuse"/>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsWin}" Value="False">
+          <Setter TargetName="TeamText" Property="Foreground" Value="Red"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+    <DataTemplate x:Key="OpponentTemplate">
+      <TextBlock Name="OpponentText" Text="{Binding Path=Opponent}" Foreground="Red"/>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsWin}" Value="False">
+          <Setter TargetName="OpponentText" Property="Foreground" Value="Chartreuse"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+    <DataTemplate x:Key="ResultTemplate">
+      <TextBlock Name="ResultText" Text="{Binding Path=Result}" Foreground="Chartreuse"/>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsWin}" Value="False">
+          <Setter TargetName="ResultText" Property="Foreground" Value="Red"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+    <DataTemplate x:Key="TotalScoreTemplate">
+      <TextBlock Name="ScoreText" Text="{Binding Path=TotalScoreText}" Foreground="Chartreuse"/>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsWin}" Value="False">
+          <Setter TargetName="ScoreText" Property="Foreground" Value="Red"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+    <DataTemplate x:Key="WinLossTemplate">
+      <TextBlock Name="WinLossText" Text="{Binding Path=WinLoss}" Foreground="Chartreuse"/>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsWin}" Value="False">
+          <Setter TargetName="WinLossText" Property="Foreground" Value="Red"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+    <DataTemplate x:Key="PerformanceFragsTemplate">
+      <Grid Height="16">
+        <StackPanel Orientation="Horizontal">
+          <Rectangle Height="16" Width="{Binding PerformanceFragsIndicatorWidth}" MaxWidth="100" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+          <TextBlock Text="{Binding Path=PerformanceFrags, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+        </StackPanel>
+      </Grid>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsPerformanceFragsPositive}" Value="False">
+          <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PerformanceDamageGivenTemplate">
+      <Grid Height="16">
+        <StackPanel Orientation="Horizontal">
+          <Rectangle Height="16" Width="{Binding PerformanceDamageGivenIndicatorWidth}" MaxWidth="100" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+          <TextBlock Text="{Binding Path=PerformanceDamageGiven, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+        </StackPanel>
+      </Grid>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsPerformanceDamageGivenPositive}" Value="False">
+          <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PerformanceEfficiencyTemplate">
+      <Grid Height="16">
+        <StackPanel Orientation="Horizontal">
+          <Rectangle Height="16" Width="{Binding PerformanceEfficiencyIndicatorWidth}" MaxWidth="100" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+          <TextBlock Text="{Binding Path=PerformanceEfficiency, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+        </StackPanel>
+      </Grid>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsPerformanceEfficiencyPositive}" Value="False">
+          <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!--<DataTemplate x:Key="ELOPointsGainedTemplate">
+      <Grid Height="16">
+        <StackPanel Orientation="Horizontal">
+          <Rectangle Height="16" Width="{Binding ELOPointsGainedIndicatorWidth}" MaxWidth="100" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+          <TextBlock Text="{Binding Path=ELOPointsGained, StringFormat={}{0:F1}}" Foreground="White" Margin="3,0,0,0"/>
+        </StackPanel>
+      </Grid>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsPerformancePositive}" Value="False">
+          <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+    <DataTemplate x:Key="ELOPointsCurrentTemplate">
+      <Grid Height="16">
+        <StackPanel Orientation="Horizontal">
+          <Rectangle Height="16" Width="{Binding ELOPointsCurrentIndicatorWidth}" MaxWidth="100" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+          <TextBlock Text="{Binding Path=ELOPointsCurrentNormalized, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+        </StackPanel>
+      </Grid>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsELOPointsCurrentPositive}" Value="False">
+          <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>-->
+
+  </UserControl.Resources>
+  <Grid>
+    <!--<TabControl>-->
+      <!--<TabItem Header="Matches">-->
+        <Grid TextBlock.Foreground="White">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="340"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <TabControl Grid.Column="0" DataContext="{Binding Path=SelectedMatch}">
+            <TabItem Header="Frags">
+              <Grid  TextBlock.Foreground="White">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="120"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="110"/>
+                    <RowDefinition Height="110"/>
+                    <RowDefinition Height="110"/>
+                  </Grid.RowDefinitions>
+                  <TextBlock Grid.Row="0" Text="Expected:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
+                  <TextBlock Grid.Row="1" Text="Actual:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
+                  <TextBlock Grid.Row="2" Text="Performance:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
+                </Grid>
+                <Grid Grid.Column="1">
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="110"/>
+                    <RowDefinition Height="110"/>
+                    <RowDefinition Height="110"/>
+                  </Grid.RowDefinitions>
+
+                  <Border Grid.Row="0" Margin="5,5,5,5" CornerRadius="10" Background="#FF555555" Width="212" Height="102" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Grid Margin="5">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="35"/>
+                      </Grid.ColumnDefinitions>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                      </Grid.RowDefinitions>
+                      <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Player}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding TeamAExpectedFragsTotal, StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Opponent}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding TeamBExpectedFragsTotal, StringFormat={}{0:F0}}" TextAlignment="Center"/>
+
+                      <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding TeamAPlayerNames[0]}"/>
+                      <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding TeamAPlayerNames[1]}"/>
+                      <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding TeamAPlayerNames[2]}"/>
+                      <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding TeamAPlayerNames[3]}"/>
+
+                      <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TeamAExpectedFrags[0], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TeamAExpectedFrags[1], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TeamAExpectedFrags[2], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TeamAExpectedFrags[3], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+
+                      <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding TeamBPlayerNames[0]}"/>
+                      <TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding TeamBPlayerNames[1]}"/>
+                      <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding TeamBPlayerNames[2]}"/>
+                      <TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding TeamBPlayerNames[3]}"/>
+
+                      <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding TeamBExpectedFrags[0], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TeamBExpectedFrags[1], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="3" Text="{Binding TeamBExpectedFrags[2], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="4" Text="{Binding TeamBExpectedFrags[3], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                    </Grid>
+                  </Border>
+
+                  <Border Grid.Row="1" Margin="5,5,5,5" CornerRadius="10" Background="#FF555577" Width="212" Height="102" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Grid Margin="5">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="35"/>
+                      </Grid.ColumnDefinitions>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                      </Grid.RowDefinitions>
+                      <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Player}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding TeamAFragsTotal}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Opponent}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding TeamBFragsTotal}" TextAlignment="Center"/>
+
+                      <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding TeamAPlayerNames[0]}"/>
+                      <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding TeamAPlayerNames[1]}"/>
+                      <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding TeamAPlayerNames[2]}"/>
+                      <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding TeamAPlayerNames[3]}"/>
+
+                      <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TeamAFrags[0]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TeamAFrags[1]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TeamAFrags[2]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TeamAFrags[3]}" TextAlignment="Center"/>
+
+                      <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding TeamBPlayerNames[0]}"/>
+                      <TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding TeamBPlayerNames[1]}"/>
+                      <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding TeamBPlayerNames[2]}"/>
+                      <TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding TeamBPlayerNames[3]}"/>
+
+                      <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding TeamBFrags[0]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TeamBFrags[1]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="3" Text="{Binding TeamBFrags[2]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="4" Text="{Binding TeamBFrags[3]}" TextAlignment="Center"/>
+                    </Grid>
+                  </Border>
+
+                  <Border Grid.Row="2" Margin="5,5,5,5" CornerRadius="10" Background="#FF555555" Width="212" Height="102" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Grid Margin="5">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="35"/>
+                      </Grid.ColumnDefinitions>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                      </Grid.RowDefinitions>
+                      <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Player}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding TeamAFragPerformanceTotal}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Opponent}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding TeamBFragPerformanceTotal}" TextAlignment="Center"/>
+
+                      <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding TeamAPlayerNames[0]}"/>
+                      <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding TeamAPlayerNames[1]}"/>
+                      <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding TeamAPlayerNames[2]}"/>
+                      <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding TeamAPlayerNames[3]}"/>
+
+                      <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TeamAFragPerformance[0]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TeamAFragPerformance[1]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TeamAFragPerformance[2]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TeamAFragPerformance[3]}" TextAlignment="Center"/>
+
+                      <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding TeamBPlayerNames[0]}"/>
+                      <TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding TeamBPlayerNames[1]}"/>
+                      <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding TeamBPlayerNames[2]}"/>
+                      <TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding TeamBPlayerNames[3]}"/>
+
+                      <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding TeamBFragPerformance[0]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TeamBFragPerformance[1]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="3" Text="{Binding TeamBFragPerformance[2]}" TextAlignment="Center"/>
+                      <TextBlock Grid.Column="4" Grid.Row="4" Text="{Binding TeamBFragPerformance[3]}" TextAlignment="Center"/>
+                    </Grid>
+                  </Border>
+                </Grid>
+              </Grid>
+            </TabItem>
+
+
+        <TabItem Header="Damage Given">
+          <Grid  TextBlock.Foreground="White">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="120"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="110"/>
+                <RowDefinition Height="110"/>
+                <RowDefinition Height="110"/>
+              </Grid.RowDefinitions>
+              <TextBlock Grid.Row="0" Text="Expected:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
+              <TextBlock Grid.Row="1" Text="Actual:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
+              <TextBlock Grid.Row="2" Text="Performance:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
+            </Grid>
+            <Grid Grid.Column="1">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="110"/>
+                <RowDefinition Height="110"/>
+                <RowDefinition Height="110"/>
+              </Grid.RowDefinitions>
+
+              <Border Grid.Row="0" Margin="5,5,5,5" CornerRadius="10" Background="#FF555555" Width="212" Height="102" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Grid Margin="5">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                  </Grid.RowDefinitions>
+                  <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Player}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding TeamAExpectedDamageGivenTotal, StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Opponent}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding TeamBExpectedDamageGivenTotal, StringFormat={}{0:F0}}" TextAlignment="Center"/>
+
+                  <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding TeamAPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding TeamAPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding TeamAPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding TeamAPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TeamAExpectedDamageGiven[0], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TeamAExpectedDamageGiven[1], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TeamAExpectedDamageGiven[2], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TeamAExpectedDamageGiven[3], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+
+                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding TeamBPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding TeamBPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding TeamBPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding TeamBPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding TeamBExpectedDamageGiven[0], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TeamBExpectedDamageGiven[1], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="3" Text="{Binding TeamBExpectedDamageGiven[2], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="4" Text="{Binding TeamBExpectedDamageGiven[3], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                </Grid>
+              </Border>
+
+              <Border Grid.Row="1" Margin="5,5,5,5" CornerRadius="10" Background="#FF555577" Width="212" Height="102" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Grid Margin="5">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                  </Grid.RowDefinitions>
+                  <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Player}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding TeamADamageGivenTotal}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Opponent}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding TeamBDamageGivenTotal}" TextAlignment="Center"/>
+
+                  <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding TeamAPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding TeamAPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding TeamAPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding TeamAPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TeamADamageGiven[0]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TeamADamageGiven[1]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TeamADamageGiven[2]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TeamADamageGiven[3]}" TextAlignment="Center"/>
+
+                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding TeamBPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding TeamBPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding TeamBPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding TeamBPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding TeamBDamageGiven[0]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TeamBDamageGiven[1]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="3" Text="{Binding TeamBDamageGiven[2]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="4" Text="{Binding TeamBDamageGiven[3]}" TextAlignment="Center"/>
+                </Grid>
+              </Border>
+
+              <Border Grid.Row="2" Margin="5,5,5,5" CornerRadius="10" Background="#FF555555" Width="212" Height="102" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Grid Margin="5">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                  </Grid.RowDefinitions>
+                  <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Player}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding TeamADamageGivenPerformanceTotal}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Opponent}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding TeamBDamageGivenPerformanceTotal}" TextAlignment="Center"/>
+
+                  <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding TeamAPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding TeamAPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding TeamAPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding TeamAPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TeamADamageGivenPerformance[0]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TeamADamageGivenPerformance[1]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TeamADamageGivenPerformance[2]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TeamADamageGivenPerformance[3]}" TextAlignment="Center"/>
+
+                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding TeamBPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding TeamBPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding TeamBPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding TeamBPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding TeamBDamageGivenPerformance[0]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TeamBDamageGivenPerformance[1]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="3" Text="{Binding TeamBDamageGivenPerformance[2]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="4" Text="{Binding TeamBDamageGivenPerformance[3]}" TextAlignment="Center"/>
+                </Grid>
+              </Border>
+            </Grid>
+          </Grid>
+        </TabItem>
+
+
+        <TabItem Header="Efficiency">
+          <Grid  TextBlock.Foreground="White">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="120"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="110"/>
+                <RowDefinition Height="110"/>
+                <RowDefinition Height="110"/>
+              </Grid.RowDefinitions>
+              <TextBlock Grid.Row="0" Text="Expected:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
+              <TextBlock Grid.Row="1" Text="Actual:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
+              <TextBlock Grid.Row="2" Text="Performance:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" FontSize="16"/>
+            </Grid>
+            <Grid Grid.Column="1">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="110"/>
+                <RowDefinition Height="110"/>
+                <RowDefinition Height="110"/>
+              </Grid.RowDefinitions>
+
+              <Border Grid.Row="0" Margin="5,5,5,5" CornerRadius="10" Background="#FF555555" Width="212" Height="102" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Grid Margin="5">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                  </Grid.RowDefinitions>
+                  <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Player}" TextAlignment="Center"/>
+                  <!--<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding TeamAExpectedEfficiencyTotal, StringFormat={}{0:F0}}" TextAlignment="Center"/>-->
+                  <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Opponent}" TextAlignment="Center"/>
+                  <!--<TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding TeamBExpectedEfficiencyTotal, StringFormat={}{0:F0}}" TextAlignment="Center"/>-->
+
+                  <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding TeamAPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding TeamAPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding TeamAPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding TeamAPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TeamAExpectedEfficiency[0], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TeamAExpectedEfficiency[1], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TeamAExpectedEfficiency[2], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TeamAExpectedEfficiency[3], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+
+                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding TeamBPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding TeamBPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding TeamBPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding TeamBPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding TeamBExpectedEfficiency[0], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TeamBExpectedEfficiency[1], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="3" Text="{Binding TeamBExpectedEfficiency[2], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="4" Text="{Binding TeamBExpectedEfficiency[3], StringFormat={}{0:F0}}" TextAlignment="Center"/>
+                </Grid>
+              </Border>
+
+              <Border Grid.Row="1" Margin="5,5,5,5" CornerRadius="10" Background="#FF555577" Width="212" Height="102" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Grid Margin="5">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                  </Grid.RowDefinitions>
+                  <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Player}" TextAlignment="Center"/>
+                  <!--<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding ScoreTeam}" TextAlignment="Center"/>-->
+                  <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Opponent}" TextAlignment="Center"/>
+                  <!--<TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding ScoreOpponent}" TextAlignment="Center"/>-->
+
+                  <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding TeamAPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding TeamAPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding TeamAPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding TeamAPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TeamAEfficiency[0]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TeamAEfficiency[1]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TeamAEfficiency[2]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TeamAEfficiency[3]}" TextAlignment="Center"/>
+
+                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding TeamBPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding TeamBPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding TeamBPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding TeamBPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding TeamBEfficiency[0]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TeamBEfficiency[1]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="3" Text="{Binding TeamBEfficiency[2]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="4" Text="{Binding TeamBEfficiency[3]}" TextAlignment="Center"/>
+                </Grid>
+              </Border>
+
+              <Border Grid.Row="2" Margin="5,5,5,5" CornerRadius="10" Background="#FF555555" Width="212" Height="102" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Grid Margin="5">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="35"/>
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="18"/>
+                  </Grid.RowDefinitions>
+                  <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Player}" TextAlignment="Center"/>
+                  <!--<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding TeamAEfficiencyPerformanceTotal}" TextAlignment="Center"/>-->
+                  <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Opponent}" TextAlignment="Center"/>
+                  <!--<TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding TeamBEfficiencyPerformanceTotal}" TextAlignment="Center"/>-->
+
+                  <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding TeamAPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding TeamAPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding TeamAPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding TeamAPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TeamAEfficiencyPerformance[0]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TeamAEfficiencyPerformance[1]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TeamAEfficiencyPerformance[2]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TeamAEfficiencyPerformance[3]}" TextAlignment="Center"/>
+
+                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding TeamBPlayerNames[0]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding TeamBPlayerNames[1]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding TeamBPlayerNames[2]}"/>
+                  <TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding TeamBPlayerNames[3]}"/>
+
+                  <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding TeamBEfficiencyPerformance[0]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TeamBEfficiencyPerformance[1]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="3" Text="{Binding TeamBEfficiencyPerformance[2]}" TextAlignment="Center"/>
+                  <TextBlock Grid.Column="4" Grid.Row="4" Text="{Binding TeamBEfficiencyPerformance[3]}" TextAlignment="Center"/>
+                </Grid>
+              </Border>
+            </Grid>
+          </Grid>
+        </TabItem>
+            
+      </TabControl>
+          <ListView Grid.Column="1" 
+                    View:GridViewSort.AutoSort="True"
+                    ItemsSource="{Binding Path=Matches}"
+                    SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay}">
+            <ListView.View>
+              <GridView AllowsColumnReorder="False">
+                <GridViewColumn CellTemplate="{StaticResource PlayerTemplate}" Header="Team" Width="80"/>
+                <GridViewColumn CellTemplate="{StaticResource OpponentTemplate}" Header="Opponent" Width="80" View:GridViewSort.PropertyName="Opponent"/>
+                <GridViewColumn DisplayMemberBinding="{Binding Path=Map}"  Header="Map" Width="60" View:GridViewSort.PropertyName="Map"/>
+                <GridViewColumn DisplayMemberBinding="{Binding Path=Date, StringFormat={}{0:d}}"  Header="Date" Width="75" View:GridViewSort.PropertyName="Date"/>
+                <GridViewColumn CellTemplate="{StaticResource ResultTemplate}" Header="Result" Width="45"/>
+                <!--<GridViewColumn DisplayMemberBinding="{Binding Path=ExpectedScoreText}"  Header="Expected" Width="75"/>-->
+                <GridViewColumn CellTemplate="{StaticResource TotalScoreTemplate}"  Header="Score" Width="70" View:GridViewSort.PropertyName=""/>
+                <GridViewColumn CellTemplate="{StaticResource PerformanceFragsTemplate}" Header="Frag Performance" Width="140" View:GridViewSort.PropertyName="PerformanceFrags"/>
+                <GridViewColumn CellTemplate="{StaticResource PerformanceDamageGivenTemplate}" Header="Damage Performance" Width="140" View:GridViewSort.PropertyName="PerformanceDamageGiven"/>
+                <GridViewColumn CellTemplate="{StaticResource PerformanceEfficiencyTemplate}" Header="Efficiency Performance" Width="140" View:GridViewSort.PropertyName="PerformanceEfficiency"/>
+              </GridView>
+            </ListView.View>
+            <!--<ListView.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Demolyze" Foreground="Black" Command="{Binding DemolyzeCommand, ElementName=PART_RootVisual, Path=DataContext}"/>
+              </ContextMenu>
+            </ListView.ContextMenu>-->
+          </ListView>
+          <!--<ContentPresenter Grid.Row="2" Content="{Binding Path=TotalPointsChart}"/>-->
+        </Grid>
+      <!--</TabItem>-->
+      <!--<TabItem Header="Opponents">
+        <ListView ItemsSource="{Binding Path=OpponentResults}"
+                  View:GridViewSort.AutoSort="True">
+          <ListView.View>
+            <GridView AllowsColumnReorder="False">
+              <GridViewColumn DisplayMemberBinding="{Binding Path=Opponent}" Header="Opponent" Width="80" View:GridViewSort.PropertyName="Opponent"/>
+              <GridViewColumn CellTemplate="{StaticResource WinLossTemplate}"  Header="Win/Loss" Width="60"/>
+            </GridView>
+          </ListView.View>
+        </ListView>
+      </TabItem>-->
+    <!--</TabControl>-->
+  </Grid>
+</UserControl>

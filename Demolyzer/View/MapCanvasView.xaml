@@ -1,0 +1,270 @@
+﻿<UserControl x:Class="Demolyzer.View.MapCanvasView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:VM="clr-namespace:Demolyzer.ViewModel"
+             xmlns:View="clr-namespace:Demolyzer.View"
+             xmlns:charts="clr-namespace:Visiblox.Charts;assembly=Visiblox.Charts"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="600">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+
+    <SolidColorBrush x:Key="QuadFill" Color="#30DDDDFF"/>
+    <SolidColorBrush x:Key="QuadStroke" Color="#FFDDDDFF"/>
+    <SolidColorBrush x:Key="PentFill" Color="#30FF0000"/>
+    <SolidColorBrush x:Key="PentStroke" Color="#FFFF0000"/>
+    <SolidColorBrush x:Key="EyesFill" Color="#30880088"/>
+    <SolidColorBrush x:Key="EyesStroke" Color="#FF880088"/>
+
+    <DataTemplate DataType="{x:Type VM:PlayerViewModel}">
+      <!--Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisConverter}}"-->
+      <Grid Width="{Binding MaxPlayerDiameterValue, Mode=OneTime}" 
+            Height="{Binding MaxPlayerDiameterValue, Mode=OneTime}" 
+            UseLayoutRounding="True"
+            SnapsToDevicePixels="True"
+            >
+        <Grid.RenderTransform>
+          <TranslateTransform X="{Binding OffsetX}" Y="{Binding OffsetY}"/>
+        </Grid.RenderTransform>
+        <Ellipse Visibility="{Binding IsPowerupEyes, Converter={StaticResource BoolToVisConverter}}"
+               Width="{Binding MaxPlayerDiameterValue, Mode=OneTime}" 
+               Height="{Binding MaxPlayerDiameterValue, Mode=OneTime}"
+               Fill="{StaticResource EyesFill}"
+               Stroke="{StaticResource EyesStroke}">
+        </Ellipse>
+        <Ellipse Visibility="{Binding IsPowerupQuad, Converter={StaticResource BoolToVisConverter}}"
+               Width="{Binding MaxPlayerDiameterValue, Mode=OneTime}" 
+               Height="{Binding MaxPlayerDiameterValue, Mode=OneTime}"
+               Fill="{StaticResource QuadFill}"
+               Stroke="{StaticResource QuadStroke}">
+        </Ellipse>
+        <Ellipse Visibility="{Binding IsPowerupPent, Converter={StaticResource BoolToVisConverter}}"
+               Width="{Binding MaxPlayerDiameterValue, Mode=OneTime}" 
+               Height="{Binding MaxPlayerDiameterValue, Mode=OneTime}"
+               Fill="{StaticResource PentFill}"
+               Stroke="{StaticResource PentStroke}">
+        </Ellipse>
+        <Border Width="{Binding PlayerDiameterValue}" 
+              Height="{Binding PlayerDiameterValue}" 
+              CornerRadius="20"
+              Background="{Binding TeamColor, Mode=OneTime}">
+          <Grid>
+            <Border BorderBrush="White" 
+                    BorderThickness="{Binding WeaponBorderThicknessValue}" 
+                    Width="{Binding LightninggunDiameterValue}" Height="{Binding LightninggunDiameterValue}"
+                    Visibility="{Binding HasLightningGun, Converter={StaticResource BoolToVisConverter}}"/>
+            <Border BorderBrush="Sienna" 
+                    BorderThickness="{Binding WeaponBorderThicknessValue}" 
+                    Width="{Binding RocketLauncherDiameterValue}" Height="{Binding RocketLauncherDiameterValue}"
+                    Visibility="{Binding HasRocketLauncher, Converter={StaticResource BoolToVisConverter}}"/>
+            <!--<Border BorderBrush="{Binding ActiveWeaponBrush}" BorderThickness="{Binding AmmoCount}" Width="{Binding MaxPowerDiameterValue}" Height="{Binding MaxPowerDiameterValue}"/>-->
+            <Grid  HorizontalAlignment="Center" VerticalAlignment="Center">
+              <Ellipse Width="{Binding ArmorDiameter}" Height="{Binding ArmorDiameter}" Fill="{Binding ArmorBrush}"/>
+              <Ellipse Width="{Binding HealthDiameter}" Height="{Binding HealthDiameter}" Fill="Blue"/>
+            </Grid>
+            <Canvas HorizontalAlignment="Left" VerticalAlignment="Top">
+              <TextBlock Text="{Binding Name, Mode=OneTime}" Foreground="Chartreuse" FontSize="18" Canvas.Top="0" Background="Black"/>
+            </Canvas>
+          </Grid>
+        </Border>
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type VM:MatchKillViewModel}">
+      <Canvas Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisConverter}}"
+            UseLayoutRounding="True"
+            SnapsToDevicePixels="True"
+            >
+        <Line X1="{Binding FraggerOffsetX}" Y1="{Binding FraggerOffsetY}" X2="{Binding DeathOffsetX}" Y2="{Binding DeathOffsetY}"
+            Stroke="Red" StrokeThickness="4"/>
+      </Canvas>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type VM:EntityViewModel}">
+      <Grid Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisConverter}}"
+            Width="{Binding EntityDiameterValue, Mode=OneTime}" 
+            Height="{Binding EntityDiameterValue, Mode=OneTime}" 
+            >
+        <Grid.RenderTransform>
+          <TranslateTransform X="{Binding OffsetX}" Y="{Binding OffsetY}"/>
+        </Grid.RenderTransform>
+        <Border BorderBrush="White" BorderThickness="1" Background="Magenta"
+                Width="{Binding ImageDiameterValue, Mode=OneTime}" Height="{Binding ImageDiameterValue, Mode=OneTime}"
+                  Visibility="{Binding IsRespawnTimeVisible, Converter={StaticResource BoolToVisConverter}}">
+          <TextBlock Text="{Binding RemainingRespawnTime}" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                     FontSize="16" FontWeight="Bold"/>
+        </Border>
+        <Grid Visibility="{Binding IsSpawned, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}"
+              Name="PART_IsSpawnedGrid">
+          <Grid Visibility="{Binding IsPowerup, Mode=OneTime, Converter={StaticResource BoolToVisConverter}}">
+            <Grid Visibility="{Binding IsPowerupVisible, Converter={StaticResource BoolToVisConverter}}">
+              <Ellipse Width="{Binding EntityDiameterValue, Mode=OneTime}" 
+                     Visibility="{Binding IsPowerupQuad, Converter={StaticResource BoolToVisConverter}}"
+                     Height="{Binding EntityDiameterValue, Mode=OneTime}"
+                     Stroke="{StaticResource QuadStroke}"
+                     Fill="{StaticResource QuadFill}"/>
+              <Ellipse Width="{Binding EntityDiameterValue, Mode=OneTime}" 
+                     Visibility="{Binding IsPowerupPent, Converter={StaticResource BoolToVisConverter}}"
+                     Height="{Binding EntityDiameterValue, Mode=OneTime}"
+                     Stroke="{StaticResource PentStroke}"
+                     Fill="{StaticResource PentFill}"/>
+              <Ellipse Width="{Binding EntityDiameterValue, Mode=OneTime}" 
+                     Visibility="{Binding IsPowerupEyes, Converter={StaticResource BoolToVisConverter}}"
+                     Height="{Binding EntityDiameterValue, Mode=OneTime}"
+                     Stroke="{StaticResource EyesStroke}"
+                     Fill="{StaticResource EyesFill}"/>
+            </Grid>
+          </Grid>
+          <Border Width="{Binding PackDiameterValue, Mode=OneTime}" Height="{Binding PackDiameterValue, Mode=OneTime}"
+                  BorderBrush="Red" Background="#66FF0000" BorderThickness="1.5"
+                  CornerRadius="3"
+                  Visibility="{Binding IsPack, Mode=OneTime, Converter={StaticResource BoolToVisConverter}}">
+          </Border>
+          <Grid Width="{Binding ImageDiameterValue, Mode=OneTime}" Height="{Binding ImageDiameterValue, Mode=OneTime}"
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              Visibility="{Binding IsImage, Mode=OneTime, Converter={StaticResource BoolToVisConverter}}">
+            <Image Visibility="{Binding IsImageVisible, Converter={StaticResource BoolToVisConverter}}"
+                 RenderOptions.BitmapScalingMode="HighQuality"
+                 Source="{Binding Image}"/>
+          </Grid>
+        </Grid>
+      </Grid>
+    </DataTemplate>
+
+  </UserControl.Resources>
+  <Grid Background="Black">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+      <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Width="{Binding MapWidth}" Height="{Binding MapHeight}">
+        <Grid.LayoutTransform>
+          <ScaleTransform ScaleX="{Binding ZoomScale}" ScaleY="{Binding ZoomScale}"/>
+        </Grid.LayoutTransform>
+        <Image Source="{Binding MapImage}" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"/>
+        <ItemsControl ItemsSource="{Binding MatchKills}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <Canvas/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        <ItemsControl ItemsSource="{Binding Players}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <Canvas/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        <ItemsControl ItemsSource="{Binding Entities}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <Canvas/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+        </ItemsControl>
+      </Grid>
+    </ScrollViewer>
+    <Grid Background="Black" Visibility="{Binding ElementName=CheckBoxShowCharts, Path=IsChecked, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="120"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <StackPanel Grid.Column="0" TextBlock.FontSize="10">
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Score" Name="ButtonScore"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Rating" Name="ButtonRating"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Efficiency" Name="ButtonEfficiency"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Spawn Frags" Name="ButtonSpawnFrags"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="RL Kills" Name="ButtonRLKills"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Q Kills" Name="ButtonQKills"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Damage Efficiency" Name="ButtonDamageEfficiency"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Damage Given" Name="ButtonDamageGiven"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Damage Taken" Name="ButtonDamageTaken"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Damage Team" Name="ButtonDamageTeam"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Armor Pickup" Name="ButtonArmorTaken"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Health Pickup" Name="ButtonHealthTaken"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="RAs" Name="ButtonRAs"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Quads" Name="ButtonQuads"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="RLs Taken" Name="ButtonRLs"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="RLs Lost" Name="ButtonRLsLost"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Kills w/ RL" Name="ButtonKillsWithRL"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Kills per RL" Name="ButtonKillsPerRL"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Time w/ RL" Name="ButtonTimeWithRL"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Time per RL" Name="ButtonTimePerRL"/>
+        <RadioButton Style="{StaticResource {x:Type ToggleButton}}" Content="Avg time to get RL" Name="ButtonAvgTimeToGetRL"/>
+      </StackPanel>
+      <charts:Chart Grid.Column="1" x:Name="MainChart" Title="" LegendVisibility="Collapsed" Foreground="Yellow" Margin="20,20,50,50" FontSize="24">
+        <charts:Chart.YAxis>
+          <charts:LinearAxis ShowMinorTicks="False" Width="70" Foreground="Yellow" FontSize="16"/>
+        </charts:Chart.YAxis>
+        <charts:Chart.XAxis>
+          <charts:CategoryAxis ShowLabels="True" ShowGridStripes="False" ShowMajorGridlines="False" ShowMajorTicks="False" Height="45" Foreground="Yellow" FontSize="12"/>
+        </charts:Chart.XAxis>
+      </charts:Chart>
+    </Grid>
+    <Grid Background="Black" Visibility="{Binding ElementName=CheckBoxShowHelp, Path=IsChecked, Converter={StaticResource BoolToVisConverter}}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="170"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Grid Grid.Row="0">
+        <StackPanel Orientation="Horizontal">
+          <Image Source="..\Resources\HelpPlayer.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <TextBox  Foreground="White" AcceptsReturn="True" xml:space="preserve" Background="Black" IsReadOnly="True" VerticalAlignment="Center" FontSize="14">
+White Circle: Quad
+White square: Player has LG
+Brown square: Player has RL
+Red Circle: Amount of armor (red for RA, etc) Bigger means more armor            
+Blue Circle: Amount of health. Bigger means more health
+          </TextBox>
+        </StackPanel>
+      </Grid>
+      <TextBox Grid.Row="1" Foreground="White" AcceptsReturn="True" xml:space="preserve" Background="#FF111111" IsReadOnly="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
+Power: An arbitrary calculation of a player's current 'strength.' It is the summation of the following stats:
+        Current Health (such as 100)
+        Current Armor (such as 150)
+        * 2 (if player has RL)
+        * 2 (if player has quad or pent)
+  Example: A player with 100H, YA, RL, and Quad
+        (100 + 150) * 2 * 2 = 1,000
+        
+Rating: An arbitary calculation of a player's performance. It is the summation of the following stats:
+        Efficiency (% such as 54)
+        + Time with RL (% of total match)
+        + NUmber of enemy RL Kills
+        + 4 * Number of quads taken
+        + 4 * Number of quads killed
+        - 2 * Number of teamkills
+        - 2 * RLs lost to enemy (from a dropped pack)
+        
+Dths (TK): Number of times killed by own teammate
+Dths spwns: Number of times killed by enemy within 3 seconds of spawning
+% Armor: The percent of damage that was to armor. Higher is better.
+RL (Tm Pack): Number of times an RL is acquired from a teammate's pack        
+RL (E Pack): Number of times an RL is acquired from an enemy's pack
+
+RL (NoDrop): Number of times died with an RL, but the RL was not in the dropped pack due to RL not active weapon
+RL (Drop): Number of dropped packs with an RL (same stat as shown at end of matches)
+RL (Lost): Number of times an RL was dropped in a pack, and the enemy got the pack (and enemy did not have RL) 
+RL (Donated): Number of times an RL was dropped in a pack, and a teammate (without RL) got the RL (either on purpose or accident)
+
+Kills w/ E-Pack: Total number of kills that were made after picking up an enemy pack (with LG or RL)
+Team Dths from PackDrop: Total number of times your team was killed by enemies that picked up your dropped RL or LG packs (and enemy had no weapon).
+Kills w/ RL: Total number of kills that were made while 'having' an RL. This is not the number of kills from RL.
+Kills per RL: Average number of kills (with any weapon) once a player picks up RL.
+      </TextBox>
+    </Grid>
+    <Border HorizontalAlignment="Right" VerticalAlignment="Bottom">
+      <StackPanel>
+        <TextBlock Margin="0,10,20,0" Text="Show" Width="70" HorizontalAlignment="Right" Foreground="LightGray" TextAlignment="Center" TextDecorations="Underline" FontWeight="Bold"/>
+        <CheckBox Margin="0,5,20,0" Width="70" Content="Charts" HorizontalAlignment="Right" Name="CheckBoxShowCharts" Foreground="LightGray" IsEnabled="{Binding IsStatsLoaded}"/>
+        <CheckBox Margin="0,5,20,0" Width="70" Content="Help" HorizontalAlignment="Right" Name="CheckBoxShowHelp" Foreground="LightGray"/>
+        <Border Margin="20,5,20,20" CornerRadius="10" Background="#1CFFFFFF">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Zoom:" VerticalAlignment="Center" Padding="10,0,0,0" Foreground="#66FFFF00"/>
+            <Slider Margin="3,10,10,10" Width="140" VerticalAlignment="Bottom" HorizontalAlignment="Right" Maximum="3.0" Minimum="1.0" TickFrequency="0.1" Value="{Binding ZoomMultiplier}"/>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

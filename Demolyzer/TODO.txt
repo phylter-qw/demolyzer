@@ -1,0 +1,130 @@
+﻿average PL
+average ping
+
+# EKills
+Max frag streak
+Average Frag streak
+Kills with Quad
+Max Quad Streak
+Kills (from enemy Pack)
+# QKills
+# RLKills 
+# LGKills
+# TKills
+# Deaths
+# Deaths (TK)
+# Deaths (S) 
+Spawn frags
+Spawn deaths
+Team Deaths (Dropped Pack)
+
+Damage
+Damage (Armor)
+Damage (Health)
+Health Pickup
+Armor Pickup
+
+# GA
+# YA
+# RA
+# Mega
+# quad
+# pent
+# eyes
+# SSG
+# NG
+# SNG
+# GL
+# rl
+# rl (From Team Pack)
+# rl (From Enemy Pack)
+# LG
+# LG (From Team Pack)
+# LG (From Enemy Pack)
+
+
+RLs
+# NoDrop //died with rl but no rl in pack
+# Dropped //dropped rl in pack
+# Lost //given to other team
+# Donated  //given to teammate
+
+LGs
+# NoDrop
+# Dropped
+# Lost
+# Donated
+
+Average Speed
+
+# kills with RL
+Avg kills Per RL Taken
+Average Lives To Get RL
+Total Time With RL
+Percent Time With RL
+Average Time To Get RL
+Average Time With RL
+
+
+Average Quad Streak
+
+#########################
+FIXED: Unable to parse MVD is a player tries to leave exit the map
+FIXED: Added support for when 1 player drops mid game. No support yet for more than 1 player dropping
+FIXED: Incorrect ping calculation for ghost players
+ADDED: Number of kills with SG/NG/GL/RL/LG (no SSG or SNG yet, they are included as SG or NG)
+ADDED: Weapon accuracy %
+
+################################
+
+1on1
+2on2
+4on4
+Maps
+
+make list of ghost demos
+
+BUG: (Rusty) Play/stop/play sequence results in players not coming back on screen
+
+Forward/Back buttons
+
+play icons
+
+"D:\\QUAKE\\qw\\duel_foogs_vs_def[dm4]151210-1613.mvd"
+"D:\\QUAKE\\qw\\duel_shrugger_vs_testos[aerowalk]081210-2356.mvd"
+
+<Cyanide```> changed dir during demo playback
+glitches in some charts
+older MVDs may not decode
+Some packs or entities on the map may not 'pick up' correctly (usually health boxes, or sometimes a dropped pack)
+Sorting end of game stats also sorts team stats (ideally team stats shold remain at the bottom)
+powerups are shown in 1on1s and 2on2s even though they are not 'spawned'
+
+export to csv
+
+Player Performance
+-Frags per min
+-Power
+
+Player average power
+
+Amount of GA, YA, RA acquired
+
+Time with LG
+
+Damage Given
+Avg opponent power
+
+<Fastidious> weapons given to enemy quad, pent, ring, etc
+
+GHOST PLAYERS
+
+
+picking up 2 healths at same time does not pickup entity
+
+TODO Sometimes packs can be dropped with 0 ammo
+
+Add message for unsupported map
+#####################
+ONLY KEEP TRACK OF CERTAIN STATS WHEN IN SPECIFIC DMM MODE
+#####################

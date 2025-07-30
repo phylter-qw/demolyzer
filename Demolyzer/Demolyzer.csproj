@@ -1,0 +1,310 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C199F95C-0A45-4C87-A3B9-9DD7E8CCBDAA}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Demolyzer</RootNamespace>
+    <AssemblyName>Demolyzer</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="QuantumBitDesigns.Mvvm">
+      <HintPath>..\Dependencies\QuantumBitDesigns.Mvvm.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Visiblox.Charts">
+      <HintPath>..\Dependencies\Visiblox.Charts.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="DelegateMarshaler.cs" />
+    <Compile Include="Model\BinaryReaderUtil.cs" />
+    <Compile Include="Model\CommandIds.cs" />
+    <Compile Include="Model\DemoContent.cs" />
+    <Compile Include="Model\DemoDelta.cs" />
+    <Compile Include="Model\DemoDeltaType.cs" />
+    <Compile Include="Model\Entity.cs" />
+    <Compile Include="Model\EntityType.cs" />
+    <Compile Include="Model\Items.cs" />
+    <Compile Include="Model\MatchProcessor.cs" />
+    <Compile Include="Model\MatchKill.cs" />
+    <Compile Include="Model\MatchRunner.cs" />
+    <Compile Include="Model\MvdReader.cs" />
+    <Compile Include="Model\PacketComparer.cs" />
+    <Compile Include="Model\PacketEventArgs.cs" />
+    <Compile Include="Model\ParticipantInfo.cs" />
+    <Compile Include="Model\Ratings\RatingsUtil.Old.cs" />
+    <Compile Include="Model\Ratings\iELOUtil.cs" />
+    <Compile Include="Model\Ratings\MatchResult.cs" />
+    <Compile Include="Model\Ratings\ParticipantMatchModel.cs" />
+    <Compile Include="Model\Ratings\ParticipantModel.cs" />
+    <Compile Include="Model\Ratings\ParticipantLookupTable.cs" />
+    <Compile Include="Model\Ratings\ParticipantRatings.cs" />
+    <Compile Include="Model\Ratings\RatingsUtil.cs" />
+    <Compile Include="Model\Ratings\SimpleMovingAverage.cs" />
+    <Compile Include="ViewModel\ApplicationShellViewModel.cs" />
+    <Compile Include="ViewModel\RatingsAndStatsViewModel.cs" />
+    <Compile Include="ViewModel\PlayerResultsViewModel.cs" />
+    <Compile Include="ViewModel\MatchResultsViewModel.cs" />
+    <Compile Include="ViewModel\MapCanvasViewModel.cs" />
+    <Compile Include="ViewModel\MvdFileTreeNodeViewModel.cs" />
+    <Compile Include="ViewModel\ParticipantInfoViewModel.cs" />
+    <Compile Include="ViewModel\PlayerViewModel.cs" />
+    <Compile Include="ViewModel\ProgressPanelViewModel.cs" />
+    <Compile Include="ViewModel\Ratings\CompareParticipantsViewModel.cs" />
+    <Compile Include="ViewModel\Ratings\OpponentResultViewModel.cs" />
+    <Compile Include="ViewModel\Ratings\ParticipantResultsViewModel.cs" />
+    <Compile Include="ViewModel\SortableObservableCollection.cs" />
+    <Compile Include="View\CompareParticipantsViewControl.xaml.cs">
+      <DependentUpon>CompareParticipantsViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParticipantResultsViewControl.xaml.cs">
+      <DependentUpon>ParticipantResultsViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RatingsAndStatsView.xaml.cs">
+      <DependentUpon>RatingsAndStatsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\PlayerResultsView.xaml.cs">
+      <DependentUpon>PlayerResultsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GridViewSort.cs" />
+    <Compile Include="View\MapCanvasView.xaml.cs">
+      <DependentUpon>MapCanvasView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MatchProgressIndicator.xaml.cs">
+      <DependentUpon>MatchProgressIndicator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MatchResultsView.xaml.cs">
+      <DependentUpon>MatchResultsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ProgressPanelViewControl.xaml.cs">
+      <DependentUpon>ProgressPanelViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RatingsHostView.xaml.cs">
+      <DependentUpon>RatingsHostView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Resources\ExpressionDark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CompareParticipantsViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParticipantResultsViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RatingsAndStatsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\PlayerResultsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\MapCanvasView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MatchProgressIndicator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MatchResultsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ProgressPanelViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RatingsHostView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Model\Player.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="MVDParser\frag_parser.c" />
+    <None Include="MVDParser\frag_parser.h" />
+    <None Include="MVDParser\logger.c" />
+    <None Include="MVDParser\logger.h" />
+    <None Include="MVDParser\main.c" />
+    <None Include="MVDParser\maindef.h" />
+    <None Include="MVDParser\mvd_parser.c" />
+    <None Include="MVDParser\mvd_parser.h" />
+    <None Include="MVDParser\netmsg_parser.c" />
+    <None Include="MVDParser\netmsg_parser.h" />
+    <None Include="MVDParser\net_msg.c" />
+    <None Include="MVDParser\net_msg.h" />
+    <None Include="MVDParser\qw_protocol.c" />
+    <None Include="MVDParser\qw_protocol.h" />
+    <None Include="MVDParser\shared.c" />
+    <None Include="MVDParser\stats.h" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="MVDParser\OUTPUT.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Maps\dm2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Maps\a2.png" />
+    <Resource Include="Resources\Maps\aerowalk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Maps\dm3.png" />
+    <Resource Include="Resources\Maps\dm4.png" />
+    <Resource Include="Resources\Maps\dm6.png" />
+    <Resource Include="Resources\Maps\e1m2.png" />
+    <Resource Include="Resources\Maps\ztndm3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataGridThemes\DataGridThemes.csproj">
+      <Project>{75FF1407-1C79-4138-B6AD-3E8D69D2AD36}</Project>
+      <Name>DataGridThemes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumBitDesigns.Charting\QuantumBitDesigns.Charting.csproj">
+      <Project>{0744884C-2EF0-4B0F-819A-A656DA600BCD}</Project>
+      <Name>QuantumBitDesigns.Charting</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Entities\Cells.png" />
+    <Resource Include="Resources\Entities\GrenadeLauncher.png" />
+    <Resource Include="Resources\Entities\Health10.png" />
+    <Resource Include="Resources\Entities\Health25.png" />
+    <Resource Include="Resources\Entities\Lightning.png" />
+    <Resource Include="Resources\Entities\Mega.png" />
+    <Resource Include="Resources\Entities\RocketLauncher.png" />
+    <Resource Include="Resources\Entities\Rockets10.png" />
+    <Resource Include="Resources\Entities\Rockets5.png" />
+    <Resource Include="Resources\Entities\SuperNailgun.png" />
+    <Resource Include="Resources\Entities\SuperShotgun.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Entities\ArmorGA.png" />
+    <Resource Include="Resources\Entities\ArmorRA.png" />
+    <Resource Include="Resources\Entities\ArmorYA.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\media-playback-pause-3.png" />
+    <Resource Include="Resources\Icons\media-playback-start-3.png" />
+    <Resource Include="Resources\Icons\media-playback-stop-3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\HelpPlayer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Maps\cmt4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Maps\cmt3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Maps\schloss.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

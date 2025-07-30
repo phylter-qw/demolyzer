@@ -1,0 +1,573 @@
+﻿<UserControl x:Class="Demolyzer.View.RatingsAndStatsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:View="clr-namespace:Demolyzer.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1200">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+    <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource CellStyle}">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style>
+    <Style x:Key="ScoreCellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource CellStyle}">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+    <Style x:Key="StatsRowStyle" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource RowStyle}">
+      <Setter Property="Background" Value="{Binding RowBackground}" />
+    </Style>
+  </UserControl.Resources>
+  <Grid>
+    <Grid>
+      <Grid>
+        <Grid.Resources>
+          <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+          <DataTemplate x:Key="NameTemplate">
+            <StackPanel Orientation="Horizontal">
+              <CheckBox IsChecked="{Binding IsOnComparisionTeamA}" Visibility="{Binding IsComparisonCheckboxesVisible, Converter={StaticResource BoolToVisConverter}}"/>
+              <CheckBox IsChecked="{Binding IsOnComparisionTeamB}" Visibility="{Binding IsComparisonCheckboxesVisible, Converter={StaticResource BoolToVisConverter}}"/>
+              <TextBlock Text="{Binding Path=Name}" Foreground="Yellow"/>
+            </StackPanel>
+          </DataTemplate>
+          <DataTemplate x:Key="RecordTemplate">
+            <TextBlock Name="TextBlock" Text="{Binding Path=Record}" Foreground="Chartreuse"/>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsWinningRecord}" Value="False">
+                <Setter TargetName="TextBlock" Property="Foreground" Value="Red"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloCombinedTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOCombinedIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOCombined, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOCombinedAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloFragsTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOFragsIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOFrags, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOFragsAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloDamageGivenTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELODamageGivenIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELODamageGiven, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELODamageGivenAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloEfficiencyTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOEfficiencyIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOEfficiency, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOEfficiencyAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloTeamplayTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOTeamplayIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOTeamplay, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOTeamplayAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloRLsKilledTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELORLsKilledIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELORLsKilled, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELORLsKilledAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloArmorsTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOArmorsIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOArmors, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOArmorsAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloPowerupsTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOPowerupsIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOPowerups, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOPowerupsAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloRLsDroppedTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELORLsDroppedIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELORLsDropped, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELORLsDroppedAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloTimeWithRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOTimeWithRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOTimeWithRL, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOTimeWithRLAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloAveragePowerTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOAveragePowerIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOAveragePower, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOAveragePowerAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloRLvsRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELORLvsRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELORLvsRL, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELORLvsRLAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloRLvsXTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELORLvsXIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELORLvsX, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELORLvsXAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloXvsRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOXvsRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOXvsRL, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOXvsRLAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="EloXvsXTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ELOXvsXIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=ELOXvsX, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsELOXvsXAboveAverage}" Value="False">
+                <Setter TargetName="Gauge" Property="Fill" Value="{StaticResource NegativeBrush}"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+          <DataTemplate x:Key="FPMTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding FPMIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=FPM, StringFormat={}{0:F2}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="FPMwithRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding FPMwithRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=FPMwithRL, StringFormat={}{0:F2}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="FPMwithNoRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding FPMwithNoRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=FPMwithNoRL, StringFormat={}{0:F2}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="DPMTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding DPMIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=DPM, StringFormat={}{0:F2}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="HighFragStreakTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding HighFragStreakIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=HighFragStreak, StringFormat={}{0:F1}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="TeamDamageTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding TeamDamageIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=TeamDamage, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="KillSpawnsTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding KillSpawnsIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=KillSpawns, StringFormat={}{0:F1}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="KillRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding KillRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=KillRL, StringFormat={}{0:F1}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="KillQuadTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding KillQuadIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=KillQuad, StringFormat={}{0:F2}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="KillTeamTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding KillTeamIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=KillTeam, StringFormat={}{0:F2}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="QuadsTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding QuadsIndicatorWidth}" Name="Gauge" Fill="{StaticResource BlueBrush}"/>
+                <TextBlock Text="{Binding Path=Quads, StringFormat={}{0:F2}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="RLDropTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding RLDropIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=RLDrop, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="KillsPerRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding KillsPerRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=KillsPerRL, StringFormat={}{0:F1}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="LivesToGetRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding LivesToGetRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=LivesToGetRL, StringFormat={}{0:F1}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="TimePerRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding TimePerRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=TimePerRL, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="TimeToGetRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding TimeToGetRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=TimeToGetRL, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="TimeWithRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding TimeWithRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource PositiveBrush}"/>
+                <TextBlock Text="{Binding Path=TimeWithRL, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="RLvsRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding RLvsRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource YellowBrush}"/>
+                <TextBlock Text="{Binding Path=RLvsRL, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="RLvsXTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding RLvsXIndicatorWidth}" Name="Gauge" Fill="{StaticResource YellowBrush}"/>
+                <TextBlock Text="{Binding Path=RLvsX, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="XvsRLTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding XvsRLIndicatorWidth}" Name="Gauge" Fill="{StaticResource YellowBrush}"/>
+                <TextBlock Text="{Binding Path=XvsRL, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="XvsXTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding XvsXIndicatorWidth}" Name="Gauge" Fill="{StaticResource YellowBrush}"/>
+                <TextBlock Text="{Binding Path=XvsX, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="ParticipationPointsTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding ParticipationPointsIndicatorWidth}" Name="Gauge" Fill="{StaticResource WhiteBrush}"/>
+                <TextBlock Text="{Binding Path=ParticipationPoints, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="WinPointsTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding WinPointsIndicatorWidth}" Name="Gauge" Fill="{StaticResource WhiteBrush}"/>
+                <TextBlock Text="{Binding Path=WinPoints, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+          <DataTemplate x:Key="TotalPointsTemplate">
+            <Grid Height="16">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="16" Width="{Binding TotalPointsIndicatorWidth}" Name="Gauge" Fill="{StaticResource WhiteBrush}"/>
+                <TextBlock Text="{Binding Path=TotalPoints, StringFormat={}{0:F0}}" Foreground="White" Margin="3,0,0,0"/>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="40"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="380"/>
+          <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="Black">
+          <TextBlock Text="Player Ratings" Foreground="Chartreuse" FontSize="22" VerticalAlignment="Center" Margin="5,0,0,0"/>
+          <Button Width="36" Margin="4" HorizontalAlignment="Right" Background="Red" Foreground="Black" TextBlock.FontSize="22" TextBlock.FontWeight="Bold" Command="{Binding CloseCommand}">X</Button>
+          <CheckBox Content="Compare" TextBlock.Foreground="Yellow" TextBlock.FontSize="20" VerticalAlignment="Center" Margin="300,0,0,0" Name="PART_CheckBoxCompare" Width="140" HorizontalAlignment="Left"
+                        IsChecked="{Binding Path=IsComparisonVisible, Mode=TwoWay}"/>
+          <Button Width="100" Height="30" Content="Export" Name="PART_ButtonExport"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Background="Black">
+          <!--This list is not visible-->
+          <ListView ItemsSource="{Binding Participants2}" View:GridViewSort.AutoSort="True" Tag="{Binding DataContext}" Name="PART_ListViewPointsResults">
+            <ListView.View>
+              <GridView AllowsColumnReorder="False">
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource RecordTemplate}" Header="Record" Width="65" View:GridViewSort.PropertyName="WinPercent"/>
+                <GridViewColumn CellTemplate="{StaticResource EloCombinedTemplate}" Header="iELO (Combined)" Width="140" View:GridViewSort.PropertyName="ELOCombined"/>
+                <GridViewColumn CellTemplate="{StaticResource EloFragsTemplate}" Header="iELO (Frags)" Width="140" View:GridViewSort.PropertyName="ELOFrags"/>
+                <GridViewColumn CellTemplate="{StaticResource EloDamageGivenTemplate}" Header="iELO (Damage Given)" Width="140" View:GridViewSort.PropertyName="ELODamageGiven"/>
+                <GridViewColumn CellTemplate="{StaticResource EloEfficiencyTemplate}" Header="iELO (Efficiency)" Width="140" View:GridViewSort.PropertyName="ELOEfficiency"/>
+                <GridViewColumn CellTemplate="{StaticResource EloTeamplayTemplate}" Header="iELO (Teamplay)" Width="140" View:GridViewSort.PropertyName="ELOTeamplay"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource TotalPointsTemplate}" Header="Total Points" Width="150" View:GridViewSort.PropertyName="TotalPoints" />
+                <GridViewColumn CellTemplate="{StaticResource ParticipationPointsTemplate}" Header="Participation Points" Width="150" View:GridViewSort.PropertyName="ParticipationPoints" />
+                <GridViewColumn CellTemplate="{StaticResource WinPointsTemplate}" Header="Win Points" Width="150" View:GridViewSort.PropertyName="WinPoints" />
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource EloRLsKilledTemplate}" Header="iELO (RLs Killed)" Width="140" View:GridViewSort.PropertyName="ELORLsKilled"/>
+                <GridViewColumn CellTemplate="{StaticResource EloArmorsTemplate}" Header="iELO (Armors)" Width="140" View:GridViewSort.PropertyName="ELOArmors"/>
+                <GridViewColumn CellTemplate="{StaticResource EloTimeWithRLTemplate}" Header="iELO (Time with RL)" Width="140" View:GridViewSort.PropertyName="ELOTimewithRL"/>
+                <GridViewColumn CellTemplate="{StaticResource EloAveragePowerTemplate}" Header="iELO (Avg Power)" Width="140" View:GridViewSort.PropertyName="ELOAveragePower"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource FPMTemplate}" Header="FPM" Width="100" View:GridViewSort.PropertyName="FPM"/>
+                <GridViewColumn CellTemplate="{StaticResource FPMwithRLTemplate}" Header="FPM (w/ RL)" Width="100" View:GridViewSort.PropertyName="FPMwithRL"/>
+                <GridViewColumn CellTemplate="{StaticResource FPMwithNoRLTemplate}" Header="FPM (no RL)" Width="100" View:GridViewSort.PropertyName="FPMwithNoRL"/>
+                <GridViewColumn CellTemplate="{StaticResource DPMTemplate}" Header="DPM" Width="100" View:GridViewSort.PropertyName="DPM"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource HighFragStreakTemplate}" Header="Avg High Fragstreak" Width="120" View:GridViewSort.PropertyName="HighFragStreak"/>
+                <GridViewColumn CellTemplate="{StaticResource TeamDamageTemplate}" Header="Avg Team Damage" Width="120" View:GridViewSort.PropertyName="TeamDamage"/>
+                <GridViewColumn CellTemplate="{StaticResource KillSpawnsTemplate}" Header="Avg Spawn Kills" Width="120" View:GridViewSort.PropertyName="KillSpawns"/>
+                <GridViewColumn CellTemplate="{StaticResource KillRLTemplate}" Header="Avg Killed RL" Width="120" View:GridViewSort.PropertyName="KillRL"/>
+                <GridViewColumn CellTemplate="{StaticResource KillQuadTemplate}" Header="Avg Killed Quad" Width="120" View:GridViewSort.PropertyName="KillQuad"/>
+                <GridViewColumn CellTemplate="{StaticResource KillTeamTemplate}" Header="Avg Killed Team" Width="120" View:GridViewSort.PropertyName="KillTeam"/>
+                <GridViewColumn CellTemplate="{StaticResource QuadsTemplate}" Header="Avg Quads" Width="120" View:GridViewSort.PropertyName="Quads"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource RLDropTemplate}" Header="RL Drop %" Width="120" View:GridViewSort.PropertyName="RLDrop"/>
+                <GridViewColumn CellTemplate="{StaticResource KillsPerRLTemplate}" Header="Kills per RL" Width="120" View:GridViewSort.PropertyName="KillsPerRL"/>
+                <GridViewColumn CellTemplate="{StaticResource LivesToGetRLTemplate}" Header="Lives to get RL" Width="120" View:GridViewSort.PropertyName="LivesToGetRL"/>
+                <GridViewColumn CellTemplate="{StaticResource TimePerRLTemplate}" Header="Time per RL (s)" Width="120" View:GridViewSort.PropertyName="TimePerRL"/>
+                <GridViewColumn CellTemplate="{StaticResource TimeToGetRLTemplate}" Header="Time to get RL (s)" Width="120" View:GridViewSort.PropertyName="TimeToGetRL"/>
+                <GridViewColumn CellTemplate="{StaticResource TimeWithRLTemplate}" Header="% Time with RL" Width="120" View:GridViewSort.PropertyName="TimeWithRL"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource RLvsRLTemplate}" Header="RL vs RL win %" Width="120" View:GridViewSort.PropertyName="RLvsRL"/>
+                <GridViewColumn CellTemplate="{StaticResource RLvsXTemplate}" Header="RL vs X win %" Width="120" View:GridViewSort.PropertyName="RLvsX"/>
+                <GridViewColumn CellTemplate="{StaticResource XvsRLTemplate}" Header="X vs RL win %" Width="120" View:GridViewSort.PropertyName="XvsRL"/>
+                <GridViewColumn CellTemplate="{StaticResource XvsXTemplate}" Header="X vs X win %" Width="120" View:GridViewSort.PropertyName="XvsX"/>
+              </GridView>
+            </ListView.View>
+          </ListView>          
+          <ListView ItemsSource="{Binding Participants}" View:GridViewSort.AutoSort="True" SelectedItem="{Binding Path=SelectedParticipant, Mode=TwoWay}" Tag="{Binding DataContext}" Name="PART_ListViewRatingResults">
+            <ListView.View>
+              <GridView AllowsColumnReorder="False">
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource RecordTemplate}" Header="Record" Width="65" View:GridViewSort.PropertyName="WinPercent"/>
+                <GridViewColumn CellTemplate="{StaticResource EloCombinedTemplate}" Header="iELO (Combined)" Width="140" View:GridViewSort.PropertyName="ELOCombined"/>
+                <GridViewColumn CellTemplate="{StaticResource EloFragsTemplate}" Header="iELO (Frags)" Width="140" View:GridViewSort.PropertyName="ELOFrags"/>
+                <GridViewColumn CellTemplate="{StaticResource EloDamageGivenTemplate}" Header="iELO (Damage Given)" Width="140" View:GridViewSort.PropertyName="ELODamageGiven"/>
+                <GridViewColumn CellTemplate="{StaticResource EloEfficiencyTemplate}" Header="iELO (Efficiency)" Width="140" View:GridViewSort.PropertyName="ELOEfficiency"/>
+                <GridViewColumn CellTemplate="{StaticResource EloTeamplayTemplate}" Header="iELO (Teamplay)" Width="140" View:GridViewSort.PropertyName="ELOTeamplay"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource TotalPointsTemplate}" Header="Total Points" Width="150" View:GridViewSort.PropertyName="TotalPoints" />
+                <GridViewColumn CellTemplate="{StaticResource ParticipationPointsTemplate}" Header="Participation Points" Width="150" View:GridViewSort.PropertyName="ParticipationPoints" />
+                <GridViewColumn CellTemplate="{StaticResource WinPointsTemplate}" Header="Win Points" Width="150" View:GridViewSort.PropertyName="WinPoints" />
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource EloRLsKilledTemplate}" Header="iELO (RLs Killed)" Width="140" View:GridViewSort.PropertyName="ELORLsKilled"/>
+                <GridViewColumn CellTemplate="{StaticResource EloArmorsTemplate}" Header="iELO (Armors)" Width="140" View:GridViewSort.PropertyName="ELOArmors"/>
+                <GridViewColumn CellTemplate="{StaticResource EloTimeWithRLTemplate}" Header="iELO (Time with RL)" Width="140" View:GridViewSort.PropertyName="ELOTimewithRL"/>
+                <GridViewColumn CellTemplate="{StaticResource EloAveragePowerTemplate}" Header="iELO (Avg Power)" Width="140" View:GridViewSort.PropertyName="ELOAveragePower"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource FPMTemplate}" Header="FPM" Width="100" View:GridViewSort.PropertyName="FPM"/>
+                <GridViewColumn CellTemplate="{StaticResource FPMwithRLTemplate}" Header="FPM (w/ RL)" Width="100" View:GridViewSort.PropertyName="FPMwithRL"/>
+                <GridViewColumn CellTemplate="{StaticResource FPMwithNoRLTemplate}" Header="FPM (no RL)" Width="100" View:GridViewSort.PropertyName="FPMwithNoRL"/>
+                <GridViewColumn CellTemplate="{StaticResource DPMTemplate}" Header="DPM" Width="100" View:GridViewSort.PropertyName="DPM"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource HighFragStreakTemplate}" Header="Avg High Fragstreak" Width="120" View:GridViewSort.PropertyName="HighFragStreak"/>
+                <GridViewColumn CellTemplate="{StaticResource TeamDamageTemplate}" Header="Avg Team Damage" Width="120" View:GridViewSort.PropertyName="TeamDamage"/>
+                <GridViewColumn CellTemplate="{StaticResource KillSpawnsTemplate}" Header="Avg Spawn Kills" Width="120" View:GridViewSort.PropertyName="KillSpawns"/>
+                <GridViewColumn CellTemplate="{StaticResource KillRLTemplate}" Header="Avg Killed RL" Width="120" View:GridViewSort.PropertyName="KillRL"/>
+                <GridViewColumn CellTemplate="{StaticResource KillQuadTemplate}" Header="Avg Killed Quad" Width="120" View:GridViewSort.PropertyName="KillQuad"/>
+                <GridViewColumn CellTemplate="{StaticResource KillTeamTemplate}" Header="Avg Killed Team" Width="120" View:GridViewSort.PropertyName="KillTeam"/>
+                <GridViewColumn CellTemplate="{StaticResource QuadsTemplate}" Header="Avg Quads" Width="120" View:GridViewSort.PropertyName="Quads"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource RLDropTemplate}" Header="RL Drop %" Width="120" View:GridViewSort.PropertyName="RLDrop"/>
+                <GridViewColumn CellTemplate="{StaticResource KillsPerRLTemplate}" Header="Kills per RL" Width="120" View:GridViewSort.PropertyName="KillsPerRL"/>
+                <GridViewColumn CellTemplate="{StaticResource LivesToGetRLTemplate}" Header="Lives to get RL" Width="120" View:GridViewSort.PropertyName="LivesToGetRL"/>
+                <GridViewColumn CellTemplate="{StaticResource TimePerRLTemplate}" Header="Time per RL (s)" Width="120" View:GridViewSort.PropertyName="TimePerRL"/>
+                <GridViewColumn CellTemplate="{StaticResource TimeToGetRLTemplate}" Header="Time to get RL (s)" Width="120" View:GridViewSort.PropertyName="TimeToGetRL"/>
+                <GridViewColumn CellTemplate="{StaticResource TimeWithRLTemplate}" Header="% Time with RL" Width="120" View:GridViewSort.PropertyName="TimeWithRL"/>
+                
+                <GridViewColumn CellTemplate="{StaticResource NameTemplate}" Header="Name" Width="100" View:GridViewSort.PropertyName="Name" />
+                <GridViewColumn CellTemplate="{StaticResource RLvsRLTemplate}" Header="RL vs RL win %" Width="120" View:GridViewSort.PropertyName="RLvsRL"/>
+                <GridViewColumn CellTemplate="{StaticResource RLvsXTemplate}" Header="RL vs X win %" Width="120" View:GridViewSort.PropertyName="RLvsX"/>
+                <GridViewColumn CellTemplate="{StaticResource XvsRLTemplate}" Header="X vs RL win %" Width="120" View:GridViewSort.PropertyName="XvsRL"/>
+                <GridViewColumn CellTemplate="{StaticResource XvsXTemplate}" Header="X vs X win %" Width="120" View:GridViewSort.PropertyName="XvsX"/>
+              </GridView>
+            </ListView.View>
+          </ListView>
+        </Grid>
+
+        <Grid Grid.Row="2" Background="Black">
+          <ContentPresenter Content="{Binding SelectedParticipant}"/>
+          <Border Visibility="{Binding IsComparisonVisible, Converter={StaticResource BoolToVisConverter}}">
+            <ContentPresenter Content="{Binding CompareParticipantsViewModel}"/>
+          </Border>
+        </Grid>
+        <Grid Grid.Row="3" Background="Black">
+          <StackPanel Orientation="Horizontal">
+            <Button Content="Demolyze:" Margin="2" Width="80" Command="{Binding DemolyzeSelectedMatchCommand}"/>
+            <TextBlock Margin="4,0,0,0" Text="{Binding SelectedParticipant.SelectedMatch.MatchResult.MvdFullName}" Foreground="Yellow" FontSize="18" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Grid>
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>

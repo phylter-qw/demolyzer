@@ -1,0 +1,278 @@
+﻿<UserControl x:Class="QuantumBitDesigns.Charting.ChartView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:QuantumBitDesigns.Charting"
+    Name="GraphView"
+>
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+    <local:DivideConverter x:Key="divideConverter"/>
+    <local:SubtractConverter x:Key="subtractConverter"/>
+    <local:PercentConverter x:Key="percentConverter"/>
+    <local:DataToPathConverter x:Key="dataToPathConverter"/>
+    <local:PositionToValueConverter x:Key="positionToValueConverter"/>
+    <local:ValueToDisplayPositionConverter x:Key="valueToDisplayPositionConverter"/>
+    <local:AxisLabelsVerticalPositionToValueConverter x:Key="axisLabelsVerticalPositionToValueConverter"/>
+    <local:DataIndexToDisplayPointConverter x:Key="dataIndexToDisplayPointConverter"/>
+    <local:DataIndexesToDisplayWidthConverter x:Key="dataIndexesToDisplayWidthConverter"/>
+  </UserControl.Resources>
+    <Grid TextBlock.FontSize="{Binding Path=FontSize}">
+      <Grid.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+          <GradientStop Color="#FF000032" Offset="0"/>
+          <GradientStop Color="#FF000000" Offset="1"/>
+        <!--<GradientStop Color="#FF40109F" Offset="0"/>
+          <GradientStop Color="#FF000014" Offset="1"/>-->
+        </LinearGradientBrush>
+      </Grid.Background>
+
+      <!--Center Line-->
+      <Canvas>
+        <Line Visibility="{Binding Path=IsZeroCenter, Converter={StaticResource BooleanToVisibility}}"
+              X1="0"
+              Y1="{Binding ElementName=GraphView, Path=ActualHeight, Converter={StaticResource divideConverter}, ConverterParameter=2.0}"
+              X2="{Binding ElementName=GraphView, Path=ActualWidth}"
+              Y2="{Binding ElementName=GraphView, Path=ActualHeight, Converter={StaticResource divideConverter}, ConverterParameter=2.0}"
+              StrokeThickness="1.5"
+              Stroke="#AA33CCFF"/>
+      </Canvas>
+
+      <!--Y Axis Lines and Labels-->
+      <ItemsControl ItemsSource="{Binding Path=AxisYPercentages}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <Canvas/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              
+              <!--Y Axis Lines-->
+              <Line X1="0"
+                    X2="{Binding ElementName=GraphView, Path=ActualWidth}"
+                    Y2="{Binding Path=Y1, RelativeSource={RelativeSource Self}}"
+                    StrokeThickness="1"
+                    Stroke="#5533CCFF">
+                <Line.Y1>
+                  <MultiBinding Converter="{StaticResource percentConverter}">
+                    <MultiBinding.Bindings>
+                      <Binding/>
+                      <Binding Path="ActualHeight" ElementName="GraphView"/>
+                    </MultiBinding.Bindings>
+                  </MultiBinding>
+                </Line.Y1>
+              </Line>
+
+              <!--Y Axis Labels-->
+              <TextBlock Foreground="#4477FFFF"
+                       Width="{Binding ElementName=GraphView, Path=ActualWidth}"
+                       TextAlignment="Right">
+                <TextBlock.RenderTransform>
+                  <TranslateTransform>
+                    <TranslateTransform.Y>
+                      <MultiBinding Converter="{StaticResource percentConverter}">
+                        <MultiBinding.Bindings>
+                          <Binding/>
+                          <Binding Path="ActualHeight" ElementName="GraphView"/>
+                        </MultiBinding.Bindings>
+                      </MultiBinding>
+                    </TranslateTransform.Y>
+                  </TranslateTransform>
+                </TextBlock.RenderTransform>
+                <TextBlock.Text>
+                  <MultiBinding Converter="{StaticResource axisLabelsVerticalPositionToValueConverter}">
+                    <MultiBinding.Bindings>
+                      <Binding/>
+                      <Binding Path="ActualHeight" ElementName="GraphView"/>
+                      <Binding Path="ViewModel.MaxY" ElementName="GraphView"/>
+                      <Binding Path="ViewModel.IsZeroBased" ElementName="GraphView"/>
+                      <Binding Path="ViewModel.YAxisStringFormat" ElementName="GraphView"/>
+                    </MultiBinding.Bindings>
+                  </MultiBinding>
+                </TextBlock.Text>
+              </TextBlock>
+              
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <!--X Axis Lines and Labels-->
+      <ItemsControl ItemsSource="{Binding Path=AxisXLabels}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <Canvas />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Canvas>
+              
+              <!--X Axis Lines-->
+              <Line Name="AxisLine"
+                    Y1="0"
+                    X2="{Binding Path=X1, RelativeSource={RelativeSource Self}}"
+                    Y2="{Binding ElementName=GraphView, Path=ActualHeight, Converter={StaticResource subtractConverter}, ConverterParameter=12}"
+                    StrokeThickness="1"
+                    Stroke="{Binding Path=Brush}">
+                <Line.X1>
+                  <MultiBinding Converter="{StaticResource dataIndexToDisplayPointConverter}">
+                    <MultiBinding.Bindings>
+                      <Binding Path="StartIndex"/>
+                      <Binding ElementName="GraphView" Path="ViewModel.Series[0].Data"/>
+                      <Binding ElementName="GraphView" Path="ActualWidth"/>
+                      <Binding ElementName="GraphView" Path="ActualHeight"/>
+                    </MultiBinding.Bindings>
+                  </MultiBinding>
+                </Line.X1>
+              </Line>
+              
+              <!--X Axis Labels-->
+              <TextBlock Foreground="{Binding Path=Brush}" Text="{Binding Path=Text}" TextAlignment="Center">
+                <TextBlock.Width>
+                  <MultiBinding Converter="{StaticResource dataIndexesToDisplayWidthConverter}">
+                    <MultiBinding.Bindings>
+                      <Binding Path="StartIndex"/>
+                      <Binding Path="EndIndex"/>
+                      <Binding ElementName="GraphView" Path="ViewModel.Series[0].Data"/>
+                      <Binding ElementName="GraphView" Path="ActualWidth"/>
+                      <Binding ElementName="GraphView" Path="ActualHeight"/>
+                    </MultiBinding.Bindings>
+                  </MultiBinding>
+                </TextBlock.Width>
+                <TextBlock.RenderTransform>
+                  <TranslateTransform Y="{Binding ElementName=GraphView, Path=ActualHeight, Converter={StaticResource subtractConverter}, ConverterParameter=14}">
+                    <TranslateTransform.X>
+                      <MultiBinding Converter="{StaticResource dataIndexToDisplayPointConverter}">
+                        <MultiBinding.Bindings>
+                          <Binding Path="StartIndex"/>
+                          <Binding ElementName="GraphView" Path="ViewModel.Series[0].Data"/>
+                          <Binding ElementName="GraphView" Path="ActualWidth"/>
+                          <Binding ElementName="GraphView" Path="ActualHeight"/>
+                        </MultiBinding.Bindings>
+                      </MultiBinding>
+                    </TranslateTransform.X>
+                  </TranslateTransform>
+                </TextBlock.RenderTransform>
+              </TextBlock>
+              
+            </Canvas>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <!--The chart data lines-->
+      <ItemsControl ItemsSource="{Binding Path=Series}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <Canvas/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              <Path Stroke="{Binding Path=Brush}" StrokeThickness="1">
+                <Path.Data>
+                  <MultiBinding Converter="{StaticResource dataToPathConverter}">
+                    <MultiBinding.Bindings>
+                      <Binding Path="Data" />
+                      <Binding Path="ViewModel.IsZeroBased" ElementName="GraphView"/>
+                      <Binding Path="ViewModel.MaxY" ElementName="GraphView"/>
+                      <Binding Path="ActualWidth" ElementName="GraphView"/>
+                      <Binding Path="ActualHeight" ElementName="GraphView"/>
+                    </MultiBinding.Bindings>
+                  </MultiBinding>
+                </Path.Data>
+              </Path>
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <!--Shows the value of the hovered point-->
+      <ItemsControl ItemsSource="{Binding Path=Series}" Background="Transparent" VerticalAlignment="Top">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <StackPanel/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Foreground="{Binding Path=Brush}">
+                  <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource positionToValueConverter}">
+                      <MultiBinding.Bindings>
+                        <Binding/>
+                        <Binding Path="ViewModel.IsZeroBased" ElementName="GraphView"/>
+                        <Binding Path="ViewModel.MaxY" ElementName="GraphView"/>
+                        <Binding Path="ActualWidth" ElementName="GraphView"/>
+                        <Binding Path="ActualHeight" ElementName="GraphView"/>
+                        <Binding Path="SelectedPosition" />
+                        <Binding Path="ViewModel.ValueStringFormat" ElementName="GraphView"/>
+                      </MultiBinding.Bindings>
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <!--Draws the hovered point-->
+      <ItemsControl ItemsSource="{Binding Path=Series}" Background="Transparent">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <Canvas/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              <Ellipse Fill="{Binding Path=Brush}" Height="5" Width="5">
+                <Ellipse.RenderTransform>
+                  <TranslateTransform X="-2.5" Y="-2.5" />
+                </Ellipse.RenderTransform>
+              </Ellipse>
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        <ItemsControl.ItemContainerStyle>
+          <Style>
+            <Setter Property="Canvas.Top">
+              <Setter.Value>
+                <MultiBinding Converter="{StaticResource valueToDisplayPositionConverter}" ConverterParameter="Vertical">
+                  <MultiBinding.Bindings>
+                    <Binding Path="Data" />
+                    <Binding Path="ViewModel.IsZeroBased" ElementName="GraphView"/>
+                    <Binding Path="ViewModel.MaxY" ElementName="GraphView"/>
+                    <Binding Path="ActualWidth" ElementName="GraphView"/>
+                    <Binding Path="ActualHeight" ElementName="GraphView"/>
+                    <Binding Path="SelectedPosition" />
+                  </MultiBinding.Bindings>
+                </MultiBinding>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Canvas.Left">
+              <Setter.Value>
+                <MultiBinding Converter="{StaticResource valueToDisplayPositionConverter}" ConverterParameter="Horizontal">
+                  <MultiBinding.Bindings>
+                    <Binding Path="Data" />
+                    <Binding Path="ViewModel.IsZeroBased" ElementName="GraphView"/>
+                    <Binding Path="ViewModel.MaxY" ElementName="GraphView"/>
+                    <Binding Path="ActualWidth" ElementName="GraphView"/>
+                    <Binding Path="ActualHeight" ElementName="GraphView"/>
+                    <Binding Path="SelectedPosition" />
+                  </MultiBinding.Bindings>
+                </MultiBinding>
+              </Setter.Value>
+            </Setter>
+          </Style>
+        </ItemsControl.ItemContainerStyle>
+      </ItemsControl>
+
+    </Grid>
+</UserControl>
