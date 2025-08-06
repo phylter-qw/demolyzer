@@ -204,7 +204,10 @@ namespace Demolyzer.Model
                     ReadSoundList(packetReader);
                     break;
                 case CommandIds.svc_modellist:
-                    ReadModelList(packetReader);
+                    ReadModelList(packetReader, false);
+                    break;
+                case CommandIds.svc_modellistshort:
+                    ReadModelList(packetReader, true);
                     break;
                 case CommandIds.svc_spawnstaticsound:
                     ReadSpawnStaticSound(packetReader);
@@ -212,8 +215,14 @@ namespace Demolyzer.Model
                 case CommandIds.svc_spawnbaseline:
                     ReadSpawnBaseline(packetReader);
                     break;
+                case CommandIds.svc_spawnbaseline2:
+                    ReadSpawnBaseline2(packetReader);
+                    break;
                 case CommandIds.svc_spawnstatic:
                     ReadSpawnStatic(packetReader);
+                    break;
+                case CommandIds.svc_spawnstatic2:
+                    ReadSpawnStatic2(packetReader);
                     break;
                 case CommandIds.svc_updatefrags:
                     ReadUpdateFrags(packetReader);
@@ -1568,6 +1577,100 @@ namespace Demolyzer.Model
             //this._log.Append(String.Format("{0,10:F3} {1,-10}{2,-20}ModelIndex:{3} Coord:({4:F0},{5:F0},{6:F0})\r\n", this._demoTime, this._lastMsg, this._lastCommand, modelIndex, coord.X, coord.Y, coord.Z));
         }
 
+        private void ReadSpawnStatic2(BinaryReader reader)
+        {
+            (_, uint bits, uint morebits) = ReadEntityNum(reader);
+            ReadEntityDelta(reader, bits, morebits);            
+        }
+
+        private void ReadSpawnBaseline2(BinaryReader reader)
+        {
+            (uint entnum, uint bits, uint morebits) = ReadEntityNum(reader);
+            if (entnum == 0)
+            {
+                return;
+            }
+            EntityDelta delta = ReadEntityDelta(reader, bits, morebits);
+            Entity entity = new Entity();
+            string model = this._modelList[(int)delta.model-1];
+            switch (model)
+            {
+                case "progs/quaddama.mdl":
+                    entity.Type = EntityType.Quad;
+                    break;
+                case "progs/invulner.mdl":
+                    entity.Type = EntityType.Pent;
+                    break;
+                case "progs/g_shot.mdl":
+                    entity.Type = EntityType.SuperShotgun;
+                    break;
+                //case "progs/g_nail.mdl":
+                //    entity.Type = EntityType.NailGun;
+                //    break;
+                case "progs/g_rock.mdl":
+                    entity.Type = EntityType.GrenadeLauncher;
+                    break;
+                case "progs/g_rock2.mdl":
+                    entity.Type = EntityType.RocketLauncher;
+                    break;
+                case "progs/invisibl.mdl":
+                    entity.Type = EntityType.Eyes;
+                    break;
+                case "progs/armor.mdl":
+                    switch (delta.skin)
+                    {
+                        case 0:
+                            entity.Type = EntityType.ArmorGA;
+                            break;
+                        case 1:
+                            entity.Type = EntityType.ArmorYA;
+                            break;
+                        case 2:
+                            entity.Type = EntityType.ArmorRA;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case "maps/b_rock1.bsp":
+                    entity.Type = EntityType.Rockets10;
+                    break;
+                case "maps/b_bh10.bsp":
+                    entity.Type = EntityType.Health10;
+                    break;
+                case "maps/b_bh25.bsp":
+                    entity.Type = EntityType.Health25;
+                    break;
+                case "maps/b_bh100.bsp":
+                    entity.Type = EntityType.Mega;
+                    break;
+                case "maps/b_rock0.bsp":
+                    entity.Type = EntityType.Rockets5;
+                    break;
+                case "progs/g_nail2.mdl":
+                    entity.Type = EntityType.SuperNailgun;
+                    break;
+                case "progs/g_light.mdl":
+                    entity.Type = EntityType.Lightning;
+                    break;
+                case "maps/b_batt0.bsp":
+                    entity.Type = EntityType.Cells;
+                    break;
+                //case "maps/b_nail0.bsp":
+                //    entity.Type = EntityType.Nails;
+                //    break;
+                default:
+                    //do not add a model if it is not one of the ones we want to keep track of
+                    return;
+            }
+
+            entity.DeathMatch = this._demoDeltaContent.ServerInfo.Deathmatch;
+            entity.OffsetX = (double)delta.origin1;
+            entity.OffsetY = (double)-delta.origin2; //NOTE: Must inverse Y since WPF (UI) uses higher numbers when going down screen
+
+            this._demoDeltaContent.AddEntity(entity);
+        }
+
         private void ReadSpawnBaseline(BinaryReader reader)
         {
             short entityIndex = reader.ReadInt16();
@@ -1718,9 +1821,9 @@ namespace Demolyzer.Model
             //LogSimpleCommand();
         }
 
-        private void ReadModelList(BinaryReader reader)
+        private void ReadModelList(BinaryReader reader, bool extended)
         {
-            int val = reader.ReadByte();
+            int val = extended ? reader.ReadUInt16() : reader.ReadByte();
 
             List<string> models = new List<string>();
             while (true)
@@ -1782,61 +1885,118 @@ namespace Demolyzer.Model
         private const int DF_WEAPONFRAME = (1 << 10);
         private const int DF_MODEL = (1 << 11);
 
-        private void ReadPacketEntities(BinaryReader reader, bool delta)
+        private const int U_FTE_TRANS = (1 << 1);
+        private const int U_FTE_MODELDBL = (1 << 3);
+        private const int U_FTE_ENTITYDBL = (1 << 5);
+        private const int U_FTE_ENTITYDBL2 = (1 << 6);
+        private const int U_FTE_YETMORE = (1 << 7);
+        private const int U_FTE_EVENMORE = (1 << 7);
+
+        private const int U_FTE_COLOURMOD = (1 << 10);
+
+        private (uint, uint, uint) ReadEntityNum(BinaryReader reader)
         {
-            byte from = 0;
-            uint bits = 0;
-            if (delta == true)
+            uint bits = reader.ReadUInt16();
+            uint entnum = bits & 0x1FF;
+            bits &= ~0x1FFU;
+            uint morebits = 0;
+            if ((bits & U_MOREBITS) != 0)
             {
-                from = reader.ReadByte();
+                bits |= reader.ReadByte();
+                if ((bits & U_FTE_EVENMORE) != 0)
+                {
+                    morebits = reader.ReadByte();
+                    if ((morebits & U_FTE_YETMORE) != 0)
+                    {
+                        morebits |= (uint)reader.ReadByte() << 8;
+                    }
+                    if ((morebits & U_FTE_ENTITYDBL) != 0)
+                    {
+                        entnum += 512;
+                    }
+                    if ((morebits & U_FTE_ENTITYDBL2) != 0)
+                    {
+                        entnum += 1024;
+                    }
+                }
+            }
+            return (entnum, bits, morebits);
+        }
+
+        private struct EntityDelta
+        {
+            public ushort? model;
+            public byte? frame;
+            public byte? colormap;
+            public byte? skin;
+            public byte? effects;
+            public float? origin1;
+            public float? origin2;
+            public float? origin3;
+            public float? angle1;
+            public float? angle2;
+            public float? angle3;
+            public byte? trans;
+            public byte[] colourmod;
+        }
+
+        private EntityDelta ReadEntityDelta(BinaryReader reader, uint bits, uint morebits)
+        {
+            EntityDelta delta = new EntityDelta();
+
+            if ((bits & U_MODEL) != 0)
+                delta.model = reader.ReadByte();
+            else if ((morebits & U_FTE_MODELDBL) != 0)
+                delta.model = reader.ReadUInt16();
+
+            if ((bits & U_FRAME) != 0)
+                delta.frame = reader.ReadByte();
+            if ((bits & U_COLORMAP) != 0)
+                delta.colormap = reader.ReadByte();
+            if ((bits & U_SKIN) != 0)
+                delta.skin = reader.ReadByte();
+            if ((bits & U_EFFECTS) != 0)
+                delta.effects = reader.ReadByte();
+            if ((bits & U_ORIGIN1) != 0)
+                delta.origin1 = reader.ReadCoord();
+            if ((bits & U_ORIGIN2) != 0)
+                delta.origin2 = reader.ReadCoord();
+            if ((bits & U_ORIGIN3) != 0)
+                delta.origin3 = reader.ReadCoord();
+            if ((bits & U_ANGLE1) != 0)
+                delta.angle1 = reader.ReadAngle();
+            if ((bits & U_ANGLE2) != 0)
+                delta.angle2 = reader.ReadAngle();
+            if ((bits & U_ANGLE3) != 0)
+                delta.angle3 = reader.ReadAngle();
+
+            if ((morebits & U_FTE_TRANS) != 0)
+                delta.trans = reader.ReadByte();
+
+            if ((morebits & U_FTE_COLOURMOD) != 0)
+            {
+                delta.colourmod = reader.ReadBytes(3);
             }
 
-            byte model = 0;
+            return delta;
+        }
 
+        private void ReadPacketEntities(BinaryReader reader, bool delta)
+        {
+            if (delta == true)
+            {
+                reader.ReadByte();
+            }
             try
             {
-
                 while (true)
                 {
-                    bits = reader.ReadUInt16();
-
-                    if (bits == 0)
+                    (uint entnum, uint bits, uint morebits) = ReadEntityNum(reader);
+                    if (entnum == 0)
                     {
                         return;
                     }
-
-                    bits = (uint)(bits & ~0x1FF); // Strip the first 9 bits.
-
-                    // Read any more bits.
-                    if ((bits & U_MOREBITS) != 0)
-                    {
-                        bits |= reader.ReadByte();
-                    }
-
-                    if ((bits & U_MODEL) != 0)
-                    {
-                        model = reader.ReadByte();
-                    }
-                    if ((bits & U_FRAME) != 0)
-                        reader.ReadByte();
-                    if ((bits & U_COLORMAP) != 0)
-                        reader.ReadByte();
-                    if ((bits & U_SKIN) != 0)
-                        reader.ReadByte();
-                    if ((bits & U_EFFECTS) != 0)
-                        reader.ReadByte();
-                    if ((bits & U_ORIGIN1) != 0)
-                        reader.ReadCoord();
-                    if ((bits & U_ORIGIN2) != 0)
-                        reader.ReadCoord();
-                    if ((bits & U_ORIGIN3) != 0)
-                        reader.ReadCoord();
-                    if ((bits & U_ANGLE1) != 0)
-                        reader.ReadAngle();
-                    if ((bits & U_ANGLE2) != 0)
-                        reader.ReadAngle();
-                    if ((bits & U_ANGLE3) != 0)
-                        reader.ReadAngle();
+                    ReadEntityDelta(reader, bits, morebits);
                 }
             }
             catch { }

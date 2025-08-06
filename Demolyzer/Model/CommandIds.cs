@@ -81,5 +81,9 @@ namespace Demolyzer.Model
         svc_updatepl = 53,		// [byte] [byte]
         svc_nails2 = 54,
         svc_qizmovoice = 83,
+
+        svc_spawnstatic2 = 21,
+        svc_modellistshort = 60,
+        svc_spawnbaseline2 = 66,
     }
 }
